@@ -1,0 +1,12 @@
+html {
+  font-size: 100%;
+}
+
+body,
+#___gatsby {
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+}

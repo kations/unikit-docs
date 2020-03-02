@@ -1,0 +1,53 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "@react-native-community/masked-view": "0.1.5",
+    "@react-navigation/native": "^5.0.8",
+    "@react-navigation/stack": "^5.1.0",
+    "color": "^3.1.2",
+    "dayjs": "^1.8.21",
+    "deepmerge": "^4.2.2",
+    "expo": "~36.0.0",
+    "gatsby": "^2.19.22",
+    "gatsby-plugin-layout": "^1.1.22",
+    "gatsby-plugin-react-native-web": "^3.0.0-beta.7",
+    "get-value": "^3.0.1",
+    "hoist-non-react-statics": "^3.3.2",
+    "parse-prop-types": "^0.3.0",
+    "prettier": "^1.19.1",
+    "prop-types": "^15.7.2",
+    "react": "~16.9.0",
+    "react-dom": "~16.9.0",
+    "react-live": "^2.2.2",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
+    "react-native-appearance": "~0.3.1",
+    "react-native-gesture-handler": "~1.5.0",
+    "react-native-reanimated": "~1.4.0",
+    "react-native-safe-area-context": "0.6.0",
+    "react-native-screens": "2.0.0-alpha.12",
+    "react-native-svg": "9.13.3",
+    "react-native-syntax-highlighter": "^2.1.0",
+    "react-native-web": "~0.11.7",
+    "react-simple-code-editor": "^0.11.0",
+    "react-spring": "^8.0.27",
+    "set-value": "^3.0.1",
+    "styled-components": "^5.0.1",
+    "svg-path-properties": "^1.0.2",
+    "swgs": "^3.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-transform-react-jsx-source": "^7.8.3",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "babel-preset-expo": "~8.0.0",
+    "path": "^0.12.7"
+  },
+  "private": true
+}

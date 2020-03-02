@@ -1,0 +1,38 @@
+---
+name: Swiper
+route: /Swiper
+menu: UI
+---
+
+import { Playground, Props } from 'docz'
+import { Swiper, Box, Flex } from '../index'
+
+# Swiper
+
+### Usage
+
+```bash
+import { Swiper } from 'unikit'
+```
+
+<Playground>
+    <Flex bg="background" w="100%" h={300} p={30}>
+        <Swiper dots>
+            <Box bg="primary" alpha={0.75} flex={1} />
+            <Box bg="primary" alpha={0.5} flex={1} />
+            <Box bg="primary" alpha={0.25} flex={1} />
+        </Swiper>
+    </Flex>
+    <Flex bg="background" w="100%" h={300} p={30}>
+        <Swiper vertical autoplay dots dotsProps={{roundness: 0, trackSize: 2, indicatorColor: "#FFF", trackColor: "#FFF"}}>
+            <Box bg="#000" alpha={0.75} flex={1} />
+            <Box bg="#000" alpha={0.5} flex={1} />
+            <Box bg="#000" alpha={0.25} flex={1} />
+     
+        </Swiper>
+    </Flex>
+</Playground>
+
+### Props
+
+<Props of={Swiper} />
