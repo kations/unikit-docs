@@ -21,8 +21,12 @@ import {
 } from "../unikit";
 import icons from "../unikit/Icon/icons";
 
-const prettier = require("prettier/standalone");
-const pluginsJS = [require("prettier/parser-babylon")];
+// import prettier from "@miksu/prettier/lib/standalone";
+// import parsers from "@miksu/prettier/lib/language-js/parser-babylon";
+// prettier.format(string, {
+//   parser: "babel",
+//   plugins: [parsers]
+// })
 
 const LiveNative = ({ live: { error, code, element, onChange }, clean }) => {
   const [string, setString] = useState(code);
@@ -36,10 +40,7 @@ const LiveNative = ({ live: { error, code, element, onChange }, clean }) => {
       {isWeb ? (
         <Flex bg="#1C182C" p={10}>
           <Editor
-            value={prettier.format(string, {
-              parser: "babylon",
-              plugins: pluginsJS
-            })}
+            value={string}
             onValueChange={text => {
               setString(text);
               onChange(text);

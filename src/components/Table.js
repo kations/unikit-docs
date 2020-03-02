@@ -11,7 +11,6 @@ const getDefaultValue = value => {
 
 export default function Table({ component, ...rest }) {
   const types = parsePropTypes(component);
-  console.log({ types });
   return (
     <Flex w="100%" {...rest}>
       <Flex bg="primary" alpha={0.05} p={20} py={10} mt={3} w="100%" row>

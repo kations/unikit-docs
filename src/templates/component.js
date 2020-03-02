@@ -2,18 +2,10 @@ import "parse-prop-types";
 import React from "react";
 import * as unikit from "../unikit";
 
-import {
-  Flex,
-  Button,
-  Page,
-  H1,
-  H2,
-  H3,
-  Animate,
-  Code,
-  isWeb
-} from "../unikit";
-import { Table, Playground, Wrapper } from "../components";
+import { Flex, Page, H1, H2, Animate, Code, isWeb } from "../unikit";
+import { Wrapper } from "../components";
+import Table from "../components/Table";
+import Playground from "../components/Playground";
 
 const capitalize = s => {
   if (typeof s !== "string") return "";

@@ -16,7 +16,8 @@ import {
   Grid,
   isWeb
 } from "../unikit";
-import { Wrapper, Link, Playground } from "../components";
+import { Wrapper, Link } from "../components";
+import Playground from "../components/Playground";
 import { pages } from "../../pages";
 
 const getComponentsByGroup = (array, group) => {

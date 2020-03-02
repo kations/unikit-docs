@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@miksu/prettier": "^1.18.5",
     "@react-native-community/masked-view": "0.1.5",
     "@react-navigation/native": "^5.0.8",
     "@react-navigation/stack": "^5.1.0",
@@ -21,7 +22,6 @@
     "get-value": "^3.0.1",
     "hoist-non-react-statics": "^3.3.2",
     "parse-prop-types": "^0.3.0",
-    "prettier": "^1.19.1",
     "prop-types": "^15.7.2",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
@@ -47,6 +47,7 @@
     "@babel/plugin-transform-react-jsx-source": "^7.8.3",
     "babel-plugin-module-resolver": "^4.0.0",
     "babel-preset-expo": "~8.0.0",
+    "gatsby-plugin-webpack-bundle-analyser-v2": "^1.1.8",
     "path": "^0.12.7"
   },
   "private": true
