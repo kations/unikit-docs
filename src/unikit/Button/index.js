@@ -160,6 +160,7 @@ const Button = withThemeProps(
                 light={light ? 1 : 0}
                 size={size}
                 pointerEvents="none"
+                numberOfLines={1}
                 {...labelProps}
               >
                 {children}

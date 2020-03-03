@@ -8,6 +8,10 @@ export const uniStyles = {
     styl: { position: "absolute", left: 0, right: 0, top: 0, bottom: 0 },
     type: PropTypes.bool
   },
+  flexCenter: {
+    styl: { alignItems: "center", justifyContent: "center" },
+    type: PropTypes.bool
+  },
   absolute: { stylKey: "position", type: PropTypes.bool },
   fixed: { stylKey: "position", type: PropTypes.bool },
   relative: { stylKey: "position", type: PropTypes.bool },

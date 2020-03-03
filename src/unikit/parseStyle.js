@@ -50,22 +50,34 @@ export default function parseStyle({
         if (styl) {
           style = {
             ...style,
-            ...{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }
+            ...styl
           };
         }
         if (color) {
           value = theme.colors[value] || value;
-          if (key === "bg" && rest.lighten && isColor(value) === true) {
+          if (
+            key === "bg" &&
+            rest.lighten !== undefined &&
+            isColor(value) === true
+          ) {
             value = Color(value)
               .lighten(rest.lighten)
               .toString();
           }
-          if (key === "bg" && rest.darken && isColor(value) === true) {
+          if (
+            key === "bg" &&
+            rest.darken !== undefined &&
+            isColor(value) === true
+          ) {
             value = Color(value)
               .darken(rest.darken)
               .toString();
           }
-          if (key === "bg" && rest.alpha && isColor(value) === true) {
+          if (
+            key === "bg" &&
+            rest.alpha !== undefined &&
+            isColor(value) === true
+          ) {
             value = Color(value)
               .alpha(rest.alpha)
               .toString();
@@ -95,6 +107,7 @@ export default function parseStyle({
     if (Platform.OS === "android") style["shadowOpacity"] = o;
   }
   delete style["absoluteFill"];
+  delete style["flexCenter"];
   delete style["web"];
   delete style["native"];
   delete style["android"];

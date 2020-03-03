@@ -224,7 +224,11 @@ const pages = [
     from: "Input",
     group: "Inputs",
     smallCode: `<Input.Slider w="80%" steps={20} value={30}  />`,
-    code: `<Input.Slider w="80%" steps={20} value={30}  />`
+    code: `<Flex align="center">
+      <Input.Slider showValue="onDown" w="80%" steps={20} value={30}  />
+      <Input.Slider showValue mt={100} w="80%" steps={20} value={30}  />
+      <Input.Slider mt={100} height={300} vertical steps={10} value={30}  />
+      </Flex>`
   },
   {
     path: "/switch",
