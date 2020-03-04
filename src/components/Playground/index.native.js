@@ -11,6 +11,7 @@ import {
   Form,
   Input,
   Button,
+  Tabs,
   useInterval
 } from "../../unikit";
 import icons from "../../unikit/Icon/icons";
@@ -51,6 +52,7 @@ export default function Table({ code, scope, ...rest }) {
         Group,
         Form,
         Input,
+        Tabs,
         Button,
         useInterval,
         useState,

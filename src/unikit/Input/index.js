@@ -60,25 +60,44 @@ const Border = animated(
   }))
 );
 
-const SwitchInput = ({ label, bg, shadow, clean, labelColor, ...rest }) => {
+const Surface = styled.View();
+
+const SwitchInput = ({ label, bg, clean, labelColor, size = 35, ...rest }) => {
   const theme = useTheme();
   return (
     <Flex
-      p={theme.globals.inputGap * 0.5}
+      p={theme.globals.inputGap * 0.6}
       pl={theme.globals.inputGap}
-      mt={clean ? theme.globals.inputGap : 0}
       br={theme.globals.roundness}
       row
       w="100%"
       content="space-between"
       align="center"
       bg={bg}
-      shadow={shadow}
     >
       <Label font="p" color={labelColor}>
         {label}
       </Label>
-      <Switch size={35} {...rest} />
+      <Switch size={size} {...rest} />
+    </Flex>
+  );
+};
+
+const CheckboxInput = ({ label, bg, clean, labelColor, ...rest }) => {
+  const theme = useTheme();
+  return (
+    <Flex
+      p={theme.globals.inputGap * 0.6}
+      pl={theme.globals.inputGap}
+      row
+      w="auto"
+      align="center"
+      bg={bg}
+    >
+      <Checkbox {...rest} />
+      <Label font="p" ml={theme.globals.inputGap * 0.5} color={labelColor}>
+        {label}
+      </Label>
     </Flex>
   );
 };
@@ -94,13 +113,23 @@ const types = {
   range: Slider,
   color: Color,
   number: Number,
-  checkbox: Checkbox,
+  checkbox: CheckboxInput,
   multiselect: MultiSelect,
   tags: Tags
 };
 
-const typesProps = {
+const getTypeProps = ({ theme, clean }) => ({
+  range: {
+    inputWrap: {
+      px: clean ? 0 : theme.globals.inputGap,
+      py: theme.globals.inputGap,
+      bg: "transparent"
+    }
+  },
   switch: {
+    inputWrap: {
+      mt: theme.globals.inputGap / 2
+    },
     wrapperProps: {
       style: {
         flexDirection: "row",
@@ -113,13 +142,10 @@ const typesProps = {
     }
   },
   checkbox: {
-    wrapperProps: {
-      style: {
-        flexDirection: "row-reverse",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        paddingBottom: 15
-      }
+    inputWrap: {
+      px: clean ? 0 : theme.globals.inputGap,
+      py: theme.globals.inputGap,
+      bg: "transparent"
     },
     labelProps: {
       size: "p",
@@ -128,16 +154,44 @@ const typesProps = {
       }
     }
   },
+  number: {
+    inputWrap: {
+      mt: !clean ? -theme.globals.inputGap / 2 : 0
+    }
+  },
+  select: {
+    inputWrap: {
+      mt: !clean ? -theme.globals.inputGap / 2 : 0
+    }
+  },
+  color: {
+    inputWrap: {
+      mt: !clean ? -theme.globals.inputGap / 2 : 0
+    }
+  },
   date: {
+    inputWrap: {
+      mt: !clean ? -theme.globals.inputGap / 2 : 0
+    },
     wrapperProps: {
       readOnly: true
     }
   },
+  text: {
+    inputWrap: {
+      mt: !clean ? -theme.globals.inputGap / 2 : 0
+    }
+  },
   textarea: {
-    numberOfLines: 3,
-    multiline: true
+    inputWrap: {
+      mt: !clean ? -theme.globals.inputGap / 2 : 0
+    },
+    input: {
+      numberOfLines: 3,
+      multiline: true
+    }
   }
-};
+});
 
 export function Input({
   children,
@@ -168,7 +222,7 @@ export function Input({
 
   const InputComp = types[type] || undefined;
 
-  const TypeProps = typesProps[type] || {};
+  const TypeProps = getTypeProps({ theme, clean })[type] || {};
 
   const transitions = useTransition(focused, null, {
     from: { left: -width },
@@ -181,13 +235,12 @@ export function Input({
       as={
         ["switch", "checkbox"].indexOf(type) > -1 ? TouchableOpacity : undefined
       }
-      bg={clean ? "transparent" : "surface"}
       onPress={() => {
         if (onChange) {
           onChange(!value);
         }
       }}
-      bg={clean ? "transparent" : "surface"}
+      bg={clean ? "transparent" : "input"}
       onLayout={event => {
         const { width } = event.nativeEvent.layout;
         setWidth(width);
@@ -198,11 +251,10 @@ export function Input({
         ...style,
         ...(TypeProps.wrapperProps ? TypeProps.wrapperProps.style : {})
       }}
-      {...wrapperProps}
     >
       {label ? (
         <Flex>
-          {label && ["switch"].indexOf(type) === -1 ? (
+          {label && ["switch", "checkbox"].indexOf(type) === -1 ? (
             <Label
               accessibilityRole={Platform.OS === "web" ? "label" : "text"}
               color={error ? "error" : focused ? "primary" : labelColor}
@@ -217,40 +269,48 @@ export function Input({
           ) : null}
         </Flex>
       ) : null}
-      {InputComp ? (
-        <InputComp
-          bg={clean ? "surface" : "transparent"}
-          onChange={onChange}
-          value={value}
-          setFocus={setFocus}
-          type={type}
-          label={label}
-          required={required}
-          options={options}
-          placeholder={placeholder}
-          shadow={clean ? shadow : undefined}
-          labelColor={error ? "error" : focused ? "primary" : labelColor}
-          clean={clean}
-          {...TypeProps}
-          {...rest}
-        />
-      ) : null}
-      {children
-        ? React.Children.only(
-            React.cloneElement(children, {
-              setFocus,
-              onChange,
-              value,
-              type,
-              label,
-              required,
-              clean,
-              labelColor: error ? "error" : focused ? "primary" : labelColor,
-              ...children.props,
-              ...rest
-            })
-          )
-        : null}
+      <Surface
+        w="100%"
+        bg={clean ? "input" : "transparent"}
+        shadow={clean ? shadow : undefined}
+        borderRadius={theme.globals.roundness}
+        {...TypeProps.inputWrap}
+      >
+        {InputComp ? (
+          <InputComp
+            bg={"transparent"}
+            onChange={onChange}
+            value={value}
+            setFocus={setFocus}
+            type={type}
+            required={required}
+            options={options}
+            placeholder={placeholder}
+            labelColor={error ? "error" : focused ? "primary" : labelColor}
+            label={label}
+            clean={clean}
+            {...(TypeProps.input || {})}
+            {...rest}
+          />
+        ) : null}
+        {children
+          ? React.Children.only(
+              React.cloneElement(children, {
+                setFocus,
+                onChange,
+                value,
+                type,
+                label,
+                required,
+                clean,
+                labelColor: error ? "error" : focused ? "primary" : labelColor,
+                ...children.props,
+                ...(TypeProps.input || {}),
+                ...rest
+              })
+            )
+          : null}
+      </Surface>
       <BorderWrap size={width} pointerEvents="none">
         <BorderBlur borderBlurColor={borderBlurColor} />
         {transitions.map(({ item, key, props }) =>

@@ -27,7 +27,7 @@ const DefaultTheme = {
       .toString(),
     surface: "#FFF",
     input: "#FFF",
-    placeholder: "",
+    placeholder: "rgba(0,0,0,0.3)",
     success: "#8bc34a",
     warning: "#ffbb33",
     error: "#f44336",
@@ -69,7 +69,7 @@ const DefaultTheme = {
   },
   globals: {
     fontFamily: "System",
-    roundness: 3,
+    roundness: 5,
     inputGap: 15
   }
 };

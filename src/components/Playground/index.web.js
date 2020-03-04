@@ -16,6 +16,7 @@ import {
   Form,
   Input,
   Button,
+  Tabs,
   useInterval,
   isWeb
 } from "../../unikit";
@@ -76,6 +77,7 @@ export default function Table({ code, scope, ...rest }) {
         Group,
         Form,
         Input,
+        Tabs,
         Button,
         useInterval,
         useState,

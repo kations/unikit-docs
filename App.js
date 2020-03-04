@@ -39,6 +39,7 @@ export default function App() {
                 background: "rgb(20,20,30)",
                 surface: "rgb(40,40,50)",
                 border: "rgba(255,255,255,0.1)",
+                placeholder: "rgba(255,255,255,0.3)",
                 text: "#FFF",
                 input: "rgb(20,20,30)"
               }

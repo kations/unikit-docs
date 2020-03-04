@@ -66,7 +66,8 @@ export default function Layout({ children }) {
               surface: "rgb(40,40,50)",
               border: "rgba(255,255,255,0.1)",
               text: "#FFF",
-              input: "rgb(20,20,30)"
+              input: "rgb(20,20,30)",
+              placeholder: "rgba(255,255,255,0.3)"
             }
           }
         },

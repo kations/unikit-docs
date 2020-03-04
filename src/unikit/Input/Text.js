@@ -34,7 +34,7 @@ const Comp = props => {
     setFocus,
     onFocus,
     onBlur,
-    placeholderColor,
+    placeholderColor = "placeholder",
     textColor,
     multiline,
     numberOfLines,
@@ -58,11 +58,7 @@ const Comp = props => {
       value={value !== undefined && value !== null ? value.toString() : ""}
       as={as || undefined}
       onChangeText={text => (onChange ? onChange(text) : null)}
-      placeholderTextColor={
-        placeholderColor
-          ? placeholderColor
-          : color(placeholderTextColor).alpha(0.35)
-      }
+      placeholderTextColor={placeholderTextColor}
       textColor={textColor}
       underlineColorAndroid="transparent"
       onFocus={() => {
@@ -89,7 +85,7 @@ const Comp = props => {
 };
 
 Comp.defaultProps = {
-  placeholderColor: "text"
+  placeholderColor: "placeholder"
 };
 
 export default Comp;

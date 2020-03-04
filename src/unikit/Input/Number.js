@@ -37,7 +37,13 @@ const Comp = ({ style, onChange, value, step = 1, ...rest }) => {
   };
 
   return (
-    <Box relative w="100%" style={style} {...rest}>
+    <Box
+      relative
+      w="100%"
+      style={style}
+      borderRadius={theme.globals.roundness}
+      {...rest}
+    >
       <TextInput
         keyboardType="decimal-pad"
         autoCapitalize="words"

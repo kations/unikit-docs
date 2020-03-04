@@ -41,15 +41,64 @@ const pages = [
     group: "UI",
     smallCode: `<Button rounded>Button</Button>`,
     code: `<Flex row wrap content="space-around">
-    <Button m={5} bg="surface" onPress={() => alert('hi')}>Basic</Button>  
-     <Button m={5} outlined>Outlined</Button>
-     <Button m={5} rounded>Rounded</Button>   
-     <Button m={5} progress={77}>Progress</Button>  
-     <Button m={5} rounded light>Light</Button>
-     <Button m={5} rounded clean>Clean</Button>
-     <Button m={5} color="error" rounded clean>Error</Button>
-     <Button m={5} rounded light ripple>Ripple</Button>   
-    </Flex>`
+    <Button m={5} bg="surface" onPress={() => alert("hi")}>
+      Basic
+    </Button>
+    <Button m={5} outlined>
+      Outlined
+    </Button>
+    <Button m={5} rounded>
+      Rounded
+    </Button>
+    <Button m={5} progress={77}>
+      Progress
+    </Button>
+    <Button m={5} rounded light>
+      Light
+    </Button>
+    <Button m={5} rounded clean>
+      Clean
+    </Button>
+    <Button m={5} color="error" rounded clean>
+      Error
+    </Button>
+    <Button m={5} rounded light ripple>
+      Ripple
+    </Button>
+  </Flex>;`
+  },
+  {
+    path: "/tabs",
+    title: "Tabs",
+    from: "Tabs",
+    group: "UI",
+    smallCode: `<Tabs w="80%" options={['Tab 1', 'Tab 2']} />`,
+    code: `<Flex align="center">
+    <Tabs
+      value="Tab 2"
+      options={["Tab 1", "Tab 2", "Tab 3"]}
+      onChange={value => alert(value)}
+    />
+    <Tabs
+      mt={50}
+      options={[
+        { label: "Tab 1", value: 0 },
+        { label: "Tab 2", value: 1 }
+      ]}
+      indicatorSize="100%"
+      activeColor="#FFF"
+      borderRadius={40}
+    />
+    <Tabs
+      bg="transparent"
+      vertical
+      mt={50}
+      options={["Tab 1", "Tab 2", "Tab 3"]}
+      tabProps={{ justifyContent: "flex-start" }}
+      borderRadius={0}
+    />
+  </Flex>;
+  `
   },
   //   {
   //     path: "/group",
@@ -85,11 +134,26 @@ const pages = [
     group: "UI",
     smallCode: `<Avatar size={66} shadow={10} shadowColor="rgba(0,0,0,0.2)" source={{uri: "https://images.unsplash.com/photo-1506252374453-ef5237291d83?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60"}} />`,
     code: `<Flex row wrap align="center" content="space-around">
-        <Avatar bg="primary" char="UN" /> 
-        <Avatar size={66} shadow={10} shadowColor="rgba(0,0,0,0.2)" source={{uri: "https://images.unsplash.com/photo-1506252374453-ef5237291d83?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60"}} /> 
-        <Avatar size={66} char="IK" source={{uri: "https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60"}} /> 
-        <Avatar bg="success" darken={0.5} char="IT" /> 
-    </Flex>`
+    <Avatar bg="primary" char="UN" />
+    <Avatar
+      size={66}
+      shadow={10}
+      shadowColor="rgba(0,0,0,0.2)"
+      source={{
+        uri:
+          "https://images.unsplash.com/photo-1506252374453-ef5237291d83?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60"
+      }}
+    />
+    <Avatar
+      size={66}
+      char="IK"
+      source={{
+        uri:
+          "https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60"
+      }}
+    />
+    <Avatar bg="success" darken={0.5} char="IT" />
+  </Flex>;`
   },
   {
     path: "/icon",
@@ -98,21 +162,28 @@ const pages = [
     group: "UI",
     smallCode: `<Icon name="zap" size={50} animate />`,
     code: `function RenderIcon() {
-      const names = Object.keys(icons)
+      const names = Object.keys(icons);
       const [index, setIndex] = useState(0);
       useInterval(() => {
-        setIndex((index + 1) % names.length)
+        setIndex((index + 1) % names.length);
       }, 1500);
       return (
         <Flex align="center" w="100%" p={30}>
-            <Flex align="center" w="100%" py={50}>
-              <Icon size={150} strokeWidth={1} name={names[index]} animate />
-            </Flex>
-            <Grid min={100} w="100%">
-              {names.sort((a,b) => a > b).map((name) => <Flex align="center" my={20} w="100%"><Icon name={name} /><Text mt={10}>{name}</Text></Flex> )}
-            </Grid>
+          <Flex align="center" w="100%" py={50}>
+            <Icon size={150} strokeWidth={1} name={names[index]} animate />
+          </Flex>
+          <Grid min={100} w="100%">
+            {names
+              .sort((a, b) => a > b)
+              .map(name => (
+                <Flex align="center" my={20} w="100%">
+                  <Icon name={name} />
+                  <Text mt={10}>{name}</Text>
+                </Flex>
+              ))}
+          </Grid>
         </Flex>
-      )
+      );
     }`
   },
   {
@@ -136,7 +207,7 @@ const pages = [
     <Box bg="primary" w="100%" h={50} />
     <Box bg="primary" w="100%" h={50} />
     <Box bg="primary" w="100%" h={50} />
-  </Grid>`
+  </Grid>;`
   },
   {
     path: "/progress",
@@ -160,21 +231,33 @@ const pages = [
       <Box bg="primary" alpha={0.5} flex={1} />
       <Box bg="primary" alpha={0.25} flex={1} />
     </Swiper>`,
-    code: `<Flex><Flex w="100%" h={200}>
-    <Swiper flex={1} dots>
+    code: `<Flex>
+    <Flex w="100%" h={200}>
+      <Swiper flex={1} dots>
         <Box bg="primary" alpha={0.75} flex={1} />
         <Box bg="primary" alpha={0.5} flex={1} />
         <Box bg="primary" alpha={0.25} flex={1} />
-    </Swiper>
+      </Swiper>
     </Flex>
     <Flex w="100%" h={200}>
-    <Swiper flex={1} vertical autoplay dots dotsProps={{roundness: 0, trackSize: 2, indicatorColor: "#FFF", trackColor: "#FFF"}}>
-            <Box bg="#000" alpha={0.75} flex={1} />
-            <Box bg="#000" alpha={0.5} flex={1} />
-            <Box bg="#000" alpha={0.25} flex={1} />
-     
-        </Swiper>
-    </Flex></Flex>`
+      <Swiper
+        flex={1}
+        vertical
+        autoplay
+        dots
+        dotsProps={{
+          roundness: 0,
+          trackSize: 2,
+          indicatorColor: "#FFF",
+          trackColor: "#FFF"
+        }}
+      >
+        <Box bg="#000" alpha={0.75} flex={1} />
+        <Box bg="#000" alpha={0.5} flex={1} />
+        <Box bg="#000" alpha={0.25} flex={1} />
+      </Swiper>
+    </Flex>
+  </Flex>;`
   },
   {
     path: "/form",
@@ -182,32 +265,78 @@ const pages = [
     from: "Form",
     group: "Inputs",
     smallCode: `<Button>Submit</Button>`,
-    code: `function form()  {
-      const formRef = useRef(null)
+    code: `function form() {
+      const formRef = useRef(null);
       return (
         <Fragment>
-        
-              <Form ref={formRef} onSubmit={(doc, reset) => {
-                alert(JSON.stringify(doc))
-                reset()
-                }} buttonProps={{mt: 10}}>
-                  <Grid gap={20} min={200}>
-                  <Input field="text.bla" w="100%" type="text" label="Text" clean={false} placeholder="placeholder" required />
-                  <Input field="text.blub" w="100%" type="text" label="Text" clean={false} placeholder="placeholder" required />
-                  </Grid>
-                  <Input field="range" type="range" label="Slider" />
-                  <Input field="tags" type="tags" label="Tags" value={['Tag']} />
-                  <Input field="switch" type="switch" label="Switch"  />
-                  <Input field="select" type="select" label="Select" options={['One', 'Two']}  />
-                  <Input field="multi" type="multiselect" label="MultiSelect" options={['One', 'Two']}  />
-                  <Input field="number" type="number" label="Number"  />
-                  <Input field="checkbox" type="checkbox" label="Checkbox"  />
-                  <Input field="date" type="date" label="DatePicker"  />
-                  <Input field="color" type="color" label="Color"  />
-              </Form>
-              <Button mt={15} w={200} onPress={() => formRef.current.submit()}>Custom trigger</Button>
-       </Fragment>
-      )
+          <Form
+            ref={formRef}
+            onSubmit={(doc, reset) => {
+              alert(JSON.stringify(doc));
+              //reset()
+            }}
+            buttonProps={{ mt: 10 }}
+          >
+            <Grid gap={20} min={200}>
+              <Input
+                field="text.bla"
+                w="100%"
+                type="text"
+                label="Text"
+                clean={false}
+                placeholder="placeholder"
+                required
+              />
+              <Input
+                field="text.blub"
+                w="100%"
+                type="text"
+                label="Text"
+                clean={false}
+                placeholder="placeholder"
+                required
+              />
+            </Grid>
+            <Input field="range" type="range" label="Slider" />
+    
+            <Tabs
+              field="tabs"
+              mt={50}
+              defaultValue={0}
+              options={[
+                { label: "Tab 1", value: 0 },
+                { label: "Tab 2", value: 1 }
+              ]}
+              indicatorSize="100%"
+              activeColor="#FFF"
+              borderRadius={40}
+              font="p"
+            />
+    
+            <Input field="tags" type="tags" label="Tags" value={["Tag"]} />
+            <Input field="switch" type="switch" label="Switch" />
+            <Input
+              field="select"
+              type="select"
+              label="Select"
+              options={["One", "Two"]}
+            />
+            <Input
+              field="multi"
+              type="multiselect"
+              label="MultiSelect"
+              options={["One", "Two"]}
+            />
+            <Input field="number" type="number" label="Number" />
+            <Input field="checkbox" type="checkbox" label="Checkbox" />
+            <Input field="date" type="date" label="DatePicker" />
+            <Input field="color" type="color" label="Color" />
+          </Form>
+          <Button mt={15} w={200} onPress={() => formRef.current.submit()}>
+            Custom trigger
+          </Button>
+        </Fragment>
+      );
     }`
   },
   {
@@ -225,10 +354,23 @@ const pages = [
     group: "Inputs",
     smallCode: `<Input.Slider w="80%" steps={20} value={30}  />`,
     code: `<Flex align="center">
-      <Input.Slider showValue="onDown" w="80%" steps={20} value={30}  />
-      <Input.Slider showValue mt={100} w="80%" steps={20} value={30}  />
-      <Input.Slider mt={100} height={300} vertical steps={10} value={30}  />
-      </Flex>`
+    <Input.Slider showValue="onDown" w="80%" steps={20} value={20} />
+    <Input.Slider
+      showValue="onDown"
+      w="80%"
+      value={20}
+      mt={100}
+      onChange={value => alert(value)}
+      handleFocusOpacity={0}
+      showTicks={false}
+      trackHeight={50}
+      handleSize={50}
+      showHandle={false}
+      handleColor="transparent"
+    />
+    <Input.Slider showValue mt={100} w="80%" steps={20} value={20} />
+    <Input.Slider mt={100} height={300} vertical steps={10} value={30} />
+  </Flex>;`
   },
   {
     path: "/switch",

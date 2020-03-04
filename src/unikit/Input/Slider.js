@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSpring, animated } from "react-spring/native";
 import * as PropTypes from "prop-types";
 
-import { useLayout, useGesture } from "../hooks";
+import { useLayout, useGesture, useUpdateEffect } from "../hooks";
 import styled, { withThemeProps, useTheme } from "../styled";
 import { getProgress, getValueByProgress } from "../util";
 import Button from "../Button";
@@ -24,8 +24,9 @@ const HandleWrap = animated(
   })
 );
 
-const getTicks = ({ min, max, ticks }) => {
+const getTicks = ({ min, max, ticks, size, handleSize }) => {
   const arr = [min];
+  if ((max / ticks) * handleSize > size) ticks = ticks * 2;
   let last = min + ticks;
   while (last < max) {
     arr.push(last);
@@ -45,8 +46,10 @@ const Slider = withThemeProps(
     trackHeight = 10,
     valueSize = 28,
     valueGap = 5,
+    showHandle = true,
     handleSize = 30,
     handleFactor = 2,
+    handleFocusOpacity = 0.2,
     handleColor = "#FFF",
     min = 0,
     max = 100,
@@ -76,11 +79,11 @@ const Slider = withThemeProps(
       ...springConfig
     });
 
-    useEffect(() => {
+    useUpdateEffect(() => {
       setProgress(getProgress(min, max, value));
     }, [value]);
 
-    useEffect(() => {
+    useUpdateEffect(() => {
       if (down === false) {
         let newValue = getValueByProgress(min, max, progress);
         if ((newValue / steps) % 1 != 0) {
@@ -129,10 +132,16 @@ const Slider = withThemeProps(
       2
     );
 
+    const handlePadding = showHandle ? handleSize / 2 : 0;
+
     return (
       <Wrap
-        w={vertical ? handleSize : "100%"}
-        h={vertical ? "100%" : handleSize}
+        w={vertical ? "auto" : "100%"}
+        h={vertical ? "100%" : "auto"}
+        pl={!vertical ? handlePadding : 0}
+        pr={!vertical ? handlePadding : 0}
+        pt={!vertical && showValue ? handlePadding : 0}
+        pb={!vertical && showTicks ? handlePadding : 0}
         relative
         row={vertical}
         {...bindGesture}
@@ -166,7 +175,7 @@ const Slider = withThemeProps(
             l={leftAlign}
             t={topAlign}
             bg="primary"
-            alpha={down ? 0.2 : 0}
+            alpha={down ? handleFocusOpacity : 0}
             absolute
             w={handleSize * handleFactor}
             h={handleSize * handleFactor}
@@ -204,38 +213,39 @@ const Slider = withThemeProps(
               ) : null}
             </Handle>
           </HandleWrap>
+          {showTicks ? (
+            <TicksWrap
+              absolute
+              l={vertical ? handleSize + tickGap : -(handleSize / 2)}
+              t={vertical ? -(handleSize / 2) : handleSize + tickGap}
+              r={vertical ? "auto" : -(handleSize / 2)}
+              b={!vertical ? "auto" : -(handleSize / 2)}
+              justify="space-between"
+              row={!vertical}
+              pointerEvents="none"
+            >
+              {getTicks({
+                min,
+                max,
+                ticks: ticks ? ticks : steps < 10 ? 10 : steps,
+                size,
+                handleSize
+              }).map((tick, index) => {
+                return (
+                  <TickWrap
+                    w={!vertical ? handleSize : "auto"}
+                    h={!vertical ? "auto" : handleSize}
+                    flexCenter
+                  >
+                    <Tick color="text" font="caption">
+                      {tick}
+                    </Tick>
+                  </TickWrap>
+                );
+              })}
+            </TicksWrap>
+          ) : null}
         </TrackWrap>
-
-        {showTicks ? (
-          <TicksWrap
-            absolute
-            l={vertical ? handleSize + tickGap : -(handleSize / 2)}
-            t={vertical ? -(handleSize / 2) : handleSize + tickGap}
-            r={vertical ? "auto" : -(handleSize / 2)}
-            b={!vertical ? "auto" : -(handleSize / 2)}
-            justify="space-between"
-            row={!vertical}
-            pointerEvents="none"
-          >
-            {getTicks({
-              min,
-              max,
-              ticks: ticks ? ticks : steps < 10 ? 10 : steps
-            }).map((tick, index) => {
-              return (
-                <TickWrap
-                  w={!vertical ? handleSize : "auto"}
-                  h={!vertical ? "auto" : handleSize}
-                  flexCenter
-                >
-                  <Tick color="text" font="caption">
-                    {tick}
-                  </Tick>
-                </TickWrap>
-              );
-            })}
-          </TicksWrap>
-        ) : null}
       </Wrap>
     );
   },
@@ -253,6 +263,7 @@ Slider.propTypes = {
   valueGap: PropTypes.number,
   handleSize: PropTypes.number,
   handleFactor: PropTypes.number,
+  handleFocusOpacity: PropTypes.number,
   handleColor: PropTypes.string,
   min: PropTypes.number,
   max: PropTypes.number,
@@ -277,6 +288,7 @@ Slider.defaultProps = {
   valueGap: 5,
   handleSize: 30,
   handleFactor: 2,
+  handleFocusOpacity: 0.2,
   handleColor: "#FFF",
   min: 0,
   max: 100,
