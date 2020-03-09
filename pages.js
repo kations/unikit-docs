@@ -68,6 +68,23 @@ const pages = [
   </Flex>;`
   },
   {
+    path: "/picker",
+    title: "Picker",
+    from: "Picker",
+    group: "UI",
+    smallCode: `<Flex w="80%"><Picker /></Flex>`,
+    code: `<Flex><Picker onChange={(value) => console.log({value})} /></Flex>`
+  },
+  {
+    path: "/collapsible",
+    title: "Collapsible",
+    from: "Collapsible",
+    group: "UI",
+    smallCode: `<Collapsible w="80%"><Box bg="primary" w={20} h={20} /></Collapsible>`,
+    code: `<Flex><Collapsible><Box bg="primary" w={100} h={100} /></Collapsible>
+    <Collapsible mt={5}><Box bg="primary" w={100} h={100} /></Collapsible></Flex>`
+  },
+  {
     path: "/tabs",
     title: "Tabs",
     from: "Tabs",
@@ -299,19 +316,20 @@ const pages = [
             </Grid>
             <Input field="range" type="range" label="Slider" />
     
-            <Tabs
-              field="tabs"
-              mt={50}
-              defaultValue={0}
-              options={[
-                { label: "Tab 1", value: 0 },
-                { label: "Tab 2", value: 1 }
-              ]}
-              indicatorSize="100%"
-              activeColor="#FFF"
-              borderRadius={40}
-              font="p"
-            />
+            <Input  label="Tabs as select">
+              <Tabs
+                field="tabs"
+                defaultValue={0}
+                options={[
+                  { label: "Tab 1", value: 0 },
+                  { label: "Tab 2", value: 1 }
+                ]}
+                indicatorSize="100%"
+                activeColor="#FFF"
+                borderRadius={35}
+                font="p"
+              />
+            </Input>
     
             <Input field="tags" type="tags" label="Tags" value={["Tag"]} />
             <Input field="switch" type="switch" label="Switch" />
@@ -410,7 +428,7 @@ const pages = [
     from: "Input",
     group: "Inputs",
     smallCode: `<Input.DatePicker w="80%" bg="input" />`,
-    code: `<Input.DatePicker w="80%" bg="input" />`
+    code: `<Form><Input type="date" label="Date" w="100%"  bg="input" field="date" /><Input type="time" label="Time"  w="100%" bg="input" field="time" /><Input type="datetime" label="Datetime" w="100%" bg="input" field="datetime" /></Form>`
   }
 ];
 

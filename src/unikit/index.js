@@ -63,6 +63,8 @@ export { default as Chart } from "./Chart";
 export { default as Overlay } from "./Overlay";
 export { default as Headline } from "./Headline";
 export { default as Dropdown } from "./Dropdown";
+export { default as Collapsible } from "./Collapsible";
+export { default as Picker } from "./Picker";
 
 //Inputs
 export { default as Input } from "./Input";

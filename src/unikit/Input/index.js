@@ -269,16 +269,17 @@ export function Input({
           ) : null}
         </Flex>
       ) : null}
-      <Surface
-        w="100%"
-        bg={clean ? "input" : "transparent"}
-        shadow={clean ? shadow : undefined}
-        borderRadius={theme.globals.roundness}
-        {...TypeProps.inputWrap}
-      >
-        {InputComp ? (
+
+      {InputComp ? (
+        <Surface
+          w="100%"
+          bg={clean ? "input" : "transparent"}
+          shadow={clean ? shadow : undefined}
+          borderRadius={theme.globals.roundness}
+          {...TypeProps.inputWrap}
+        >
           <InputComp
-            bg={"transparent"}
+            bg="transparent"
             onChange={onChange}
             value={value}
             setFocus={setFocus}
@@ -292,25 +293,10 @@ export function Input({
             {...(TypeProps.input || {})}
             {...rest}
           />
-        ) : null}
-        {children
-          ? React.Children.only(
-              React.cloneElement(children, {
-                setFocus,
-                onChange,
-                value,
-                type,
-                label,
-                required,
-                clean,
-                labelColor: error ? "error" : focused ? "primary" : labelColor,
-                ...children.props,
-                ...(TypeProps.input || {}),
-                ...rest
-              })
-            )
-          : null}
-      </Surface>
+        </Surface>
+      ) : null}
+      {children ? children : null}
+
       <BorderWrap size={width} pointerEvents="none">
         <BorderBlur borderBlurColor={borderBlurColor} />
         {transitions.map(({ item, key, props }) =>

@@ -13,11 +13,6 @@ const Box = styled.View(({ theme }) => ({
   position: "relative"
 }));
 
-const Headline = styled.Text({
-  font: "h3",
-  color: "text"
-});
-
 const Comp = props => {
   const {
     value,
@@ -25,6 +20,7 @@ const Comp = props => {
     options = [],
     style,
     placeholder = "Please select...",
+    doneText = "Done",
     overlayProps = {},
     inputProps = {},
     pickerProps = {},
@@ -144,11 +140,9 @@ const Comp = props => {
           {...overlayProps}
         >
           <Box width="100%">
-            {placeholder && <Headline>{placeholder}</Headline>}
             {renderPicker()}
-
             <Button m={0} onPress={() => setShow(false)}>
-              Fertig
+              {doneText}
             </Button>
           </Box>
         </Overlay>

@@ -51,7 +51,7 @@ export default function App() {
         </Flex>
       ) : null}
       <Wrapper mb={100}>
-        <H3 style={{ fontWeight: "bold" }} animate onVisible>
+        <H3 style={{ fontWeight: "bold" }} animate>
           Getting started
         </H3>
         <Animate delay={250}>
@@ -68,7 +68,7 @@ export default function App() {
         {groups.map(group => {
           return (
             <Fragment key={group}>
-              <H3 style={{ fontWeight: "bold" }} animate onVisible>
+              <H3 style={{ fontWeight: "bold" }} animate>
                 {group}
               </H3>
               <Grid mt={10} mb={75} min={200} gap={20}>
@@ -77,7 +77,7 @@ export default function App() {
                   .map(({ title, path, smallCode }) => {
                     return (
                       <Link to={path}>
-                        <Animate onVisible>
+                        <Animate>
                           <Flex
                             bg="primary"
                             alpha={0.1}

@@ -50,7 +50,8 @@ export function Page({
     ...{
       onScroll: onScrollPage,
       scrollEventThrottle: 100,
-      showsVerticalScrollIndicator: false
+      showsVerticalScrollIndicator: false,
+      ref: scrollRef
     },
     ...scrollViewProps
   };
@@ -62,9 +63,7 @@ export function Page({
       {...rest}
     >
       {renderHeader ? renderHeader(top) : null}
-      <Scroller ref={scrollRef} {...(scrollable ? ScrollerProps : {})}>
-        {children}
-      </Scroller>
+      <Scroller {...(scrollable ? ScrollerProps : {})}>{children}</Scroller>
       {renderFooter ? renderFooter(top) : null}
     </PageWrap>
   );

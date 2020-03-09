@@ -144,7 +144,6 @@ const Slider = withThemeProps(
         pb={!vertical && showTicks ? handlePadding : 0}
         relative
         row={vertical}
-        {...bindGesture}
         {...rest}
       >
         <TrackWrap
@@ -185,6 +184,7 @@ const Slider = withThemeProps(
                 ? [{ translateY: dist }]
                 : [{ translateX: dist }]
             }}
+            {...bindGesture}
             flexCenter
           >
             <Handle

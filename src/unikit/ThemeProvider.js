@@ -55,6 +55,9 @@ const DefaultTheme = {
       fontSize: rem(1),
       lineHeight: rem(1.5)
     },
+    default: {
+      fontSize: rem(1)
+    },
     label: {
       fontSize: rem(0.75)
     },
