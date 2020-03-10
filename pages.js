@@ -233,10 +233,24 @@ const pages = [
     group: "UI",
     smallCode: `<Progress size={70} value={66} />`,
     code: `<Flex row wrap content="space-around" align="center">
-    <Progress value={66} /> 
-    <Progress value={33} size={100} /> 
+    <Progress value={66} showValue />
+    <Progress
+      value={33}
+      size={100}
+      angle={180}
+      formatValue={v => v + "%"}
+      showValue
+    />
+    <Progress
+      value={33}
+      size={100}
+      trackWidth={9}
+      progressWidth={3}
+      formatValue={v => v + "%"}
+      showValue
+    />
     <Progress loading />
-    </Flex>`
+  </Flex>`
   },
   {
     path: "/swiper",

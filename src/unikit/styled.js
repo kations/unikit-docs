@@ -25,7 +25,7 @@ export const withThemeProps = (Component, name) => {
       );
     }
 
-    return <Component {...props} {...themeProps} ref={ref} />;
+    return <Component {...props} theme={theme} {...themeProps} ref={ref} />;
   });
 
   hoistStatics(WithTheme, Component);
