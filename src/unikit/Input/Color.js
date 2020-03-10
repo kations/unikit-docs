@@ -1,18 +1,84 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import PropTypes from "prop-types";
 import { TouchableOpacity } from "react-native";
+import tinycolor from "tinycolor2";
 
-import { useTheme } from "../styled";
+import styled, { useTheme } from "../styled";
+import { useUpdateEffect } from "../hooks";
+
 import { isDark } from "../util";
 import TextInput from "./Text";
 import Overlay from "../Overlay";
 import Button from "../Button";
 import Box from "../Box";
+import Flex from "../Flex";
 import Icon from "../Icon";
 import Grid from "../Grid";
+import Slider from "./Slider";
+
+const Label = styled.Text(({ color, size }) => ({
+  color: color,
+  font: "label",
+  color: "text",
+  pb: 5,
+  pt: 10
+}));
+
+const Gradient = ({ gradientSteps, maximumValue, getStepColor, ...rest }) => {
+  const rows = [];
+  for (let i = 0; i <= gradientSteps; i++) {
+    rows.push(
+      <Flex
+        key={i}
+        style={{
+          flex: 1,
+          backgroundColor: getStepColor((i * maximumValue) / gradientSteps)
+        }}
+      />
+    );
+  }
+  return (
+    <Flex w="100%" h="100%" row {...rest}>
+      {rows}
+    </Flex>
+  );
+};
+
+const HueGradient = ({ style, gradientSteps }) => {
+  return (
+    <Gradient
+      style={style}
+      gradientSteps={gradientSteps}
+      getStepColor={i => tinycolor({ s: 1, l: 0.5, h: i }).toHslString()}
+      maximumValue={359}
+    />
+  );
+};
+
+const SaturationGradient = ({ style, gradientSteps, color }) => {
+  return (
+    <Gradient
+      style={style}
+      gradientSteps={gradientSteps}
+      getStepColor={i => tinycolor({ ...color, s: i }).toHslString()}
+      maximumValue={1}
+    />
+  );
+};
+
+const LightnessGradient = ({ style, gradientSteps, color }) => {
+  return (
+    <Gradient
+      style={style}
+      gradientSteps={gradientSteps}
+      getStepColor={i => tinycolor({ ...color, l: i }).toHslString()}
+      maximumValue={1}
+    />
+  );
+};
 
 const Comp = ({
-  value,
+  value = "red",
   onChange,
   style,
   defaultColors = [
@@ -38,10 +104,20 @@ const Comp = ({
   setFocus,
   overlayProps = {},
   inputProps = {},
+  saveAs = "hex",
+  cancelText = "Cancel",
+  saveText = "Save",
   ...rest
 }) => {
+  const [color, setColor] = useState(tinycolor(value).toHsl());
   const theme = useTheme();
   const [visible, setVisible] = useState(false);
+
+  useUpdateEffect(() => {
+    setColor(tinycolor(value).toHsl());
+  }, [value]);
+
+  console.log({ color, st: tinycolor(color).toHexString() });
 
   return (
     <Fragment>
@@ -91,7 +167,30 @@ const Comp = ({
         {...overlayProps}
       >
         <Box width="100%">
-          <Grid min={88}>
+          <Label>Selected Color</Label>
+          <Flex
+            w="100%"
+            h={100}
+            p={15}
+            justifyContent="flex-end"
+            alignItems="flex-start"
+            borderRadius={theme.globals.roundness}
+            bg={tinycolor(color).toHexString()}
+          >
+            <Button
+              bg={
+                tinycolor(color).getBrightness() < 199
+                  ? "rgba(255,255,255,0.1)"
+                  : "rgba(0,0,0,0.1)"
+              }
+              color={tinycolor(color).getBrightness() < 199 ? "#FFF" : "#000"}
+            >
+              {saveAs === "hex"
+                ? tinycolor(color).toHexString()
+                : tinycolor(color).toRgbString()}
+            </Button>
+          </Flex>
+          {/* <Grid min={88}>
             {defaultColors.map((color, index) => (
               <Box
                 key={index}
@@ -110,8 +209,71 @@ const Comp = ({
                 }}
               />
             ))}
-          </Grid>
-          <Button onPress={() => setVisible(false)}>Fertig</Button>
+          </Grid> */}
+          <Label>Hue</Label>
+          <Slider
+            renderTrack={() => <HueGradient gradientSteps={50} />}
+            value={color.h}
+            max={359}
+            onChange={h => setColor({ ...color, h })}
+            onSwipe={(p, h) => setColor({ ...color, h })}
+            showTicks={false}
+          />
+          <Label>Lightness</Label>
+          <Slider
+            renderTrack={() => (
+              <LightnessGradient color={color} gradientSteps={50} />
+            )}
+            value={color.l}
+            max={1}
+            steps={0.1}
+            onChange={l => setColor({ ...color, l })}
+            onSwipe={(p, l) => setColor({ ...color, l })}
+            showTicks={false}
+          />
+
+          <Label>Saturation</Label>
+          <Slider
+            renderTrack={() => (
+              <SaturationGradient color={color} gradientSteps={50} />
+            )}
+            value={color.s}
+            max={1}
+            steps={0.1}
+            onChange={s => setColor({ ...color, s })}
+            onSwipe={(p, s) => setColor({ ...color, s })}
+            showTicks={false}
+          />
+          <Flex w="100%" mt={20} row>
+            <Button
+              flex={1}
+              mr={5}
+              onPress={() => {
+                setVisible(false);
+                setColor(tinycolor(value).toHsl());
+              }}
+              bg="error"
+              light
+            >
+              {cancelText}
+            </Button>
+            <Button
+              flex={1}
+              ml={5}
+              onPress={() => {
+                setVisible(false);
+                if (onChange) {
+                  if (saveAs === "hex") {
+                    onChange(tinycolor(color).toHexString());
+                  } else {
+                    onChange(tinycolor(color).toRgbString());
+                  }
+                }
+              }}
+            >
+              {saveText}
+            </Button>
+          </Flex>
         </Box>
       </Overlay>
     </Fragment>

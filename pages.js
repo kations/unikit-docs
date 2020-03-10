@@ -399,6 +399,14 @@ const pages = [
     code: `<Input.Switch />`
   },
   {
+    path: "/color",
+    title: "Color",
+    from: "Input",
+    group: "Inputs",
+    smallCode: `<Input.Color />`,
+    code: `<Form><Input.Color field="color" defaultValue="#FFF" /></Form>`
+  },
+  {
     path: "/checkbox",
     title: "Checkbox",
     from: "Input",

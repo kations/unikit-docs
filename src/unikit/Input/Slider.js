@@ -63,6 +63,7 @@ const Slider = withThemeProps(
     minDistance = 5,
     handleProps = {},
     springConfig = {},
+    renderTrack,
     ...rest
   }) => {
     const theme = useTheme();
@@ -80,7 +81,9 @@ const Slider = withThemeProps(
     });
 
     useUpdateEffect(() => {
-      setProgress(getProgress(min, max, value));
+      if (!down) {
+        setProgress(getProgress(min, max, value));
+      }
     }, [value]);
 
     useUpdateEffect(() => {
@@ -110,10 +113,11 @@ const Slider = withThemeProps(
           let newProgress = getProgress(0, size, currentPosition);
           if (newProgress < min) {
             newProgress = min;
-          } else if (newProgress > max / 100) {
-            newProgress = max / 100;
+          } else if (newProgress > 1) {
+            newProgress = 1;
           }
-          if (onSwipe) onSwipe(newProgress);
+          let newValue = getValueByProgress(min, max, newProgress);
+          if (onSwipe) onSwipe(newProgress, newValue);
           setProgress(newProgress);
         },
         onPanResponderRelease: (e, { vx, vy }) => {
@@ -158,17 +162,22 @@ const Slider = withThemeProps(
             h={vertical ? "100%" : trackHeight}
             bg={trackColor}
             borderRadius={theme.globals.roundness}
+            overflow="hidden"
           >
-            <TrackProgress
-              w={vertical ? trackHeight : "0%"}
-              h={vertical ? "0%" : trackHeight}
-              bg={progressColor}
-              borderRadius={theme.globals.roundness}
-              style={{
-                width: vertical ? "100%" : dist,
-                height: !vertical ? "100%" : dist
-              }}
-            />
+            {renderTrack ? (
+              renderTrack(progress)
+            ) : (
+              <TrackProgress
+                w={vertical ? trackHeight : "0%"}
+                h={vertical ? "0%" : trackHeight}
+                bg={progressColor}
+                borderRadius={theme.globals.roundness}
+                style={{
+                  width: vertical ? "100%" : dist,
+                  height: !vertical ? "100%" : dist
+                }}
+              />
+            )}
           </Track>
           <HandleWrap
             l={leftAlign}
@@ -193,6 +202,9 @@ const Slider = withThemeProps(
               bg={handleColor}
               borderRadius={handleSize / 2}
               shadow={5}
+              borderWidth={1}
+              borderColor="text"
+              borderColorAlpha={0.05}
               flexCenter
               {...handleProps}
             >
@@ -204,7 +216,7 @@ const Slider = withThemeProps(
                   absolute
                   minWidth={100}
                 >
-                  <Button size={valueSize} rounded>
+                  <Button bg={progressColor} size={valueSize} rounded>
                     {`${Math.round(getValueByProgress(min, max, progress))}${
                       valueSuffix ? valueSuffix : ""
                     }`}
@@ -276,7 +288,8 @@ Slider.propTypes = {
   vertical: PropTypes.bool,
   minDistance: PropTypes.number,
   handleProps: PropTypes.object,
-  springConfig: PropTypes.object
+  springConfig: PropTypes.object,
+  renderTrack: PropTypes.func
 };
 
 Slider.defaultProps = {

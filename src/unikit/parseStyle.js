@@ -1,5 +1,6 @@
 import Color from "color";
 import { Platform } from "react-native";
+import tinycolor from "tinycolor2";
 
 import { styles } from "./styles";
 
@@ -56,12 +57,13 @@ export default function parseStyle({
         if (color) {
           value = theme.colors[value] || value;
           if (
-            key === "bg" &&
-            rest.lighten !== undefined &&
-            isColor(value) === true
+            (key === "bg" &&
+              rest.lighten !== undefined &&
+              isColor(value) === true) ||
+            (isColor(value) && rest[`${key}Lighten`])
           ) {
             value = Color(value)
-              .lighten(rest.lighten)
+              .lighten(rest[`${key}Lighten`] || rest.lighten)
               .toString();
           }
           if (
@@ -74,12 +76,13 @@ export default function parseStyle({
               .toString();
           }
           if (
-            key === "bg" &&
-            rest.alpha !== undefined &&
-            isColor(value) === true
+            (key === "bg" &&
+              rest.alpha !== undefined &&
+              isColor(value) === true) ||
+            (isColor(value) && rest[`${key}Alpha`])
           ) {
             value = Color(value)
-              .alpha(rest.alpha)
+              .alpha(rest[`${key}Alpha`] || rest.alpha)
               .toString();
           }
         }

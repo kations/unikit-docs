@@ -41,7 +41,8 @@
     "smoothscroll-polyfill": "^0.4.4",
     "styled-components": "^5.0.1",
     "svg-path-properties": "^1.0.2",
-    "swgs": "^3.3.0"
+    "swgs": "^3.3.0",
+    "tinycolor2": "^1.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
