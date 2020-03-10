@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import * as PropTypes from "prop-types";
-import color from "color";
+import tc from "tinycolor2";
 import { useTransition, animated } from "react-spring/native";
 
 import styled from "../styled";
@@ -16,8 +16,8 @@ const Ripple = animated(
     height: size,
     borderRadius: size / 2,
     position: "absolute",
-    backgroundColor: color(theme.colors[rippleColor] || rippleColor)
-      .darken(0.1)
+    backgroundColor: tc(theme.colors[rippleColor] || rippleColor)
+      .darken(5)
       .toString(),
     zIndex: 0
   }))

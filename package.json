@@ -12,7 +12,6 @@
     "@react-native-community/masked-view": "0.1.5",
     "@react-navigation/native": "^5.0.8",
     "@react-navigation/stack": "^5.1.0",
-    "color": "^3.1.2",
     "dayjs": "^1.8.21",
     "deepmerge": "^4.2.2",
     "expo": "~36.0.0",

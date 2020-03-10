@@ -291,7 +291,7 @@ const DatePicker = ({
         height="auto"
         visible={show}
         onClose={() => setShow(false)}
-        contentProps={{ p: 20, maxWidth: 500, w: "90%", bg: "surface" }}
+        contentProps={{ maxWidth: 500, w: "90%", bg: "surface" }}
         {...overlayProps}
       >
         <Box width="100%">

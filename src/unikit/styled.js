@@ -70,7 +70,11 @@ export default function styled(component, alias) {
         style["fontFamily"] = theme.globals.fontFamily;
       }
 
-      const parsedStyle = { ...style, ...parseStyle({ theme, ...style }) };
+      const parsedStyle = parseStyle({
+        theme,
+        ...style,
+        overwriteStyles: false
+      });
       delete parsedStyle["absoluteFill"];
       delete parsedStyle["web"];
       delete parsedStyle["native"];

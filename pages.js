@@ -130,7 +130,7 @@ const pages = [
   //         <Button>Label</Button>
   //     </Group>
   // </Flex>
-  // <Flex bg="primary" alpha={0.1} p={30}  align="center">
+  // <Flex bg="primary" bgAlpha={0.1} p={30}  align="center">
   //     <Headline>Welcome back</Headline>
   //     <Text o={0.5}>Login with your credentials</Text>
   //     <Form maxWidth={600} buttonProps={{mt: 15}} onSubmit={(doc, reset) => {
@@ -244,16 +244,16 @@ const pages = [
     from: "Swiper",
     group: "UI",
     smallCode: `<Swiper w={160} h={100} autoplay dots>
-      <Box bg="primary" alpha={0.75} flex={1} />
-      <Box bg="primary" alpha={0.5} flex={1} />
-      <Box bg="primary" alpha={0.25} flex={1} />
+      <Box bg="primary" bgAlpha={0.75} flex={1} />
+      <Box bg="primary" bgAlpha={0.5} flex={1} />
+      <Box bg="primary" bgAlpha={0.25} flex={1} />
     </Swiper>`,
     code: `<Flex>
     <Flex w="100%" h={200}>
       <Swiper flex={1} dots>
-        <Box bg="primary" alpha={0.75} flex={1} />
-        <Box bg="primary" alpha={0.5} flex={1} />
-        <Box bg="primary" alpha={0.25} flex={1} />
+        <Box bg="primary" bgAlpha={0.75} flex={1} />
+        <Box bg="primary" bgAlpha={0.5} flex={1} />
+        <Box bg="primary" bgAlpha={0.25} flex={1} />
       </Swiper>
     </Flex>
     <Flex w="100%" h={200}>
@@ -269,9 +269,9 @@ const pages = [
           trackColor: "#FFF"
         }}
       >
-        <Box bg="#000" alpha={0.75} flex={1} />
-        <Box bg="#000" alpha={0.5} flex={1} />
-        <Box bg="#000" alpha={0.25} flex={1} />
+        <Box bg="#000" bgAlpha={0.75} flex={1} />
+        <Box bg="#000" bgAlpha={0.5} flex={1} />
+        <Box bg="#000" bgAlpha={0.25} flex={1} />
       </Swiper>
     </Flex>
   </Flex>;`
@@ -403,8 +403,8 @@ const pages = [
     title: "Color",
     from: "Input",
     group: "Inputs",
-    smallCode: `<Input.Color />`,
-    code: `<Form><Input.Color field="color" defaultValue="#FFF" /></Form>`
+    smallCode: `<Input.Color w="80%"  bg="input" />`,
+    code: `<Form><Input.Color w="80%"  bg="input" field="color" defaultValue="#FFF" /></Form>`
   },
   {
     path: "/checkbox",

@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { ThemeProvider } from "styled-components/native";
-import color from "color";
+import tc from "tinycolor2";
 
 import Alert from "./Alert";
 import { PortalProvider, PortalExit } from "./Portal";
@@ -18,12 +18,12 @@ const primary = "#673fb4";
 const DefaultTheme = {
   colors: {
     primary: primary,
-    background: color(primary)
-      .alpha(0.1)
-      .toString(),
+    background: tc(primary)
+      .setAlpha(0.1)
+      .toRgbString(),
     accent: "",
-    text: color(primary)
-      .darken(0.6)
+    text: tc(primary)
+      .darken(30)
       .toString(),
     surface: "#FFF",
     input: "#FFF",
@@ -31,9 +31,9 @@ const DefaultTheme = {
     success: "#8bc34a",
     warning: "#ffbb33",
     error: "#f44336",
-    shadow: color(primary)
-      .alpha(0.1)
-      .toString()
+    shadow: tc(primary)
+      .setAlpha(0.1)
+      .toRgbString()
   },
   fonts: {
     h1: {
@@ -73,6 +73,7 @@ const DefaultTheme = {
   globals: {
     fontFamily: "System",
     roundness: 5,
+    gap: 15,
     inputGap: 15
   }
 };

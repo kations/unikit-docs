@@ -183,7 +183,7 @@ const Slider = withThemeProps(
             l={leftAlign}
             t={topAlign}
             bg="primary"
-            alpha={down ? handleFocusOpacity : 0}
+            bgAlpha={down ? handleFocusOpacity : 0}
             absolute
             w={handleSize * handleFactor}
             h={handleSize * handleFactor}

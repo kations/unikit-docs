@@ -56,7 +56,7 @@ export default function App() {
         </H3>
         <Animate delay={250}>
           <Flex py={15}>
-            <Code bg="primary" alpha={0.1} p={20}>
+            <Code bg="primary" bgAlpha={0.1} p={20}>
               <Code color="primary">{`yarn add`}</Code>
               {` unikit styled-components react-spring swgs`}
             </Code>
@@ -80,7 +80,7 @@ export default function App() {
                         <Animate>
                           <Flex
                             bg="primary"
-                            alpha={0.1}
+                            bgAlpha={0.1}
                             w="100%"
                             height={150}
                             align="center"
@@ -95,7 +95,7 @@ export default function App() {
                           <Flex
                             bg="surface"
                             bg="primary"
-                            alpha={0.05}
+                            bgAlpha={0.05}
                             px={20}
                             py={12}
                           >

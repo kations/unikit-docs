@@ -35,7 +35,7 @@ const LiveNative = ({ live: { error, code, element, onChange }, clean }) => {
   if (clean) return <Comp />;
   return (
     <Flex>
-      <Flex bg="primary" alpha={0.1} px={20} py={30}>
+      <Flex bg="primary" bgAlpha={0.1} px={20} py={30}>
         {error ? null : <Comp />}
       </Flex>
       {isWeb ? (

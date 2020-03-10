@@ -1,5 +1,4 @@
 import React from "react";
-import color from "color";
 
 import styled, { useTheme, withThemeProps } from "../styled";
 import { rem } from "../util";

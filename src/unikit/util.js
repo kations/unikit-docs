@@ -1,4 +1,4 @@
-import color from "color";
+import tc from "tinycolor2";
 import { Dimensions, Platform, PixelRatio } from "react-native";
 
 const get = require("get-value");
@@ -23,15 +23,7 @@ export const getObjValue = (obj, path) => {
 };
 
 export const isDark = colorString => {
-  if (isColor(colorString)) {
-    const { r, g, b } = color(colorString)
-      .rgb()
-      .object();
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    return brightness < 180 ? true : false;
-  } else {
-    return false;
-  }
+  return tc(colorString).isValid() && tc(colorString).getBrightness() < 175;
 };
 
 export const canUseDOM = !!(
@@ -59,22 +51,4 @@ export const getProgress = (a, b, v) => {
 
 export const getValueByProgress = (start, end, t) => {
   return start * (1 - t) + end * t;
-};
-
-const interpolate = (min, max, value) => {
-  var theVariable = value * 3; // 1 to 100
-  var distance = max - min;
-  var position = min + (theVariable / 100) * distance;
-  return position;
-};
-
-const isColor = col => {
-  try {
-    color(col)
-      .lighten(0.9)
-      .toString();
-    return true;
-  } catch (err) {
-    return false;
-  }
 };

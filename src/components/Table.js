@@ -13,7 +13,7 @@ export default function Table({ component, ...rest }) {
   const types = parsePropTypes(component);
   return (
     <Flex w="100%" {...rest}>
-      <Flex bg="primary" alpha={0.05} p={20} py={10} mt={3} w="100%" row>
+      <Flex bg="primary" bgAlpha={0.05} p={20} py={10} mt={3} w="100%" row>
         <Flex flex={1}>
           <Text>Name</Text>
         </Flex>
@@ -27,7 +27,7 @@ export default function Table({ component, ...rest }) {
       {Object.keys(types).map(key => {
         const { type, required, defaultValue } = types[key];
         return (
-          <Flex bg="primary" alpha={0.1} p={20} mt={3} w="100%" row>
+          <Flex bg="primary" bgAlpha={0.1} p={20} mt={3} w="100%" row>
             <Flex flex={1}>
               <Text color="primary">{key}</Text>
             </Flex>

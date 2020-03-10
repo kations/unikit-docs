@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import color from "color";
+import tc from "tinycolor2";
 import { Platform } from "react-native";
 import { isDark, setObjValue, getObjValue } from "./util";
 import styled, { useTheme, withTheme } from "./styled";
@@ -26,7 +26,7 @@ export {
   styled,
   useTheme,
   withTheme,
-  color,
+  tc as color,
   setObjValue,
   getObjValue,
   useDimensions,

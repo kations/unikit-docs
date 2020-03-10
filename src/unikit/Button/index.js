@@ -1,13 +1,11 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import { TouchableOpacity } from "react-native";
-import color from "color";
+import tc from "tinycolor2";
 
 import styled, { useTheme, withThemeProps } from "../styled";
 import Hoverable from "../Hoverable";
 import Ripple from "../Ripple";
-import Box from "../Box";
-
 import Progress from "../Progress";
 import { isDark } from "../util";
 
@@ -22,30 +20,30 @@ const getBackground = ({
 }) => {
   if (outlined) {
     return isHovered
-      ? color(theme.colors[bg] || bg)
-          .alpha(0.1)
-          .toString()
+      ? tc(theme.colors[bg] || bg)
+          .setAlpha(0.1)
+          .toRgbString()
       : "transparent";
   }
   if (light) {
     return isHovered
-      ? color(theme.colors[bg] || bg)
-          .alpha(0.15)
-          .toString()
-      : color(theme.colors[bg] || bg)
-          .alpha(0.1)
-          .toString();
+      ? tc(theme.colors[bg] || bg)
+          .setAlpha(0.15)
+          .toRgbString()
+      : tc(theme.colors[bg] || bg)
+          .setAlpha(0.1)
+          .toRgbString();
   }
   if (clean) {
     return isHovered
-      ? color(theme.colors[textColor] || textColor)
-          .alpha(0.1)
-          .toString()
+      ? tc(theme.colors[textColor] || textColor)
+          .setAlpha(0.1)
+          .toRgbString()
       : "transparent";
   }
   return isHovered
-    ? color(theme.colors[bg] || bg)
-        .darken(0.1)
+    ? tc(theme.colors[bg] || bg)
+        .darken(5)
         .toString()
     : theme.colors[bg] || bg;
 };
@@ -82,7 +80,7 @@ const LoadingWrap = styled.View({
 const Button = withThemeProps(
   ({
     children,
-    size = 50,
+    size = 44,
     bg = "primary",
     activeOpacity = 0.9,
     outlined = false,

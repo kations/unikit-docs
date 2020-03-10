@@ -22,7 +22,7 @@ export default function App({ pageContext, route }) {
         </Flex>
         <Animate delay={250}>
           <Flex py={15}>
-            <Code bg="primary" alpha={0.1} p={20}>
+            <Code bg="primary" bgAlpha={0.1} p={20}>
               <Code color="primary">{`import`}</Code>
               {` { ${from} } from`}
               <Code color="primary">{` 'unikit'`}</Code>

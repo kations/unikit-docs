@@ -65,7 +65,7 @@ export function Dots({
     >
       <Track
         bg={trackColor || "background"}
-        alpha={0.2}
+        bgAlpha={0.2}
         w={vertical ? trackSize : items.length * itemSize}
         h={!vertical ? trackSize : items.length * itemSize}
         relative

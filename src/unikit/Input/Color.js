@@ -20,8 +20,8 @@ const Label = styled.Text(({ color, size }) => ({
   color: color,
   font: "label",
   color: "text",
-  pb: 5,
-  pt: 10
+  paddingBottom: 5,
+  paddingTop: 10
 }));
 
 const Gradient = ({ gradientSteps, maximumValue, getStepColor, ...rest }) => {
@@ -78,7 +78,7 @@ const LightnessGradient = ({ style, gradientSteps, color }) => {
 };
 
 const Comp = ({
-  value = "red",
+  value,
   onChange,
   style,
   defaultColors = [
@@ -163,7 +163,7 @@ const Comp = ({
         visible={visible}
         height="auto"
         onClose={() => setVisible(false)}
-        contentProps={{ p: 20, maxWidth: 500, w: "90%", bg: "surface" }}
+        contentProps={{ maxWidth: 500, w: "90%", bg: "surface" }}
         {...overlayProps}
       >
         <Box width="100%">
@@ -175,6 +175,8 @@ const Comp = ({
             justifyContent="flex-end"
             alignItems="flex-start"
             borderRadius={theme.globals.roundness}
+            borderColor="text"
+            borderColorAlpha={0.05}
             bg={tinycolor(color).toHexString()}
           >
             <Button
@@ -247,7 +249,7 @@ const Comp = ({
           <Flex w="100%" mt={20} row>
             <Button
               flex={1}
-              mr={5}
+              mr={theme.globals.gap / 2}
               onPress={() => {
                 setVisible(false);
                 setColor(tinycolor(value).toHsl());
@@ -259,7 +261,7 @@ const Comp = ({
             </Button>
             <Button
               flex={1}
-              ml={5}
+              ml={theme.globals.gap / 2}
               onPress={() => {
                 setVisible(false);
                 if (onChange) {
