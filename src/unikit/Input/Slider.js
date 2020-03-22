@@ -36,13 +36,157 @@ const getTicks = ({ min, max, ticks, size, handleSize }) => {
   return arr;
 };
 
-const Slider = withThemeProps(
-  ({
-    value = 0,
+const HandleComp = ({
+  progress,
+  setProgress,
+  down,
+  setDown,
+  size,
+  progressColor = "primary",
+  valueSize = 28,
+  valueGap = 5,
+  showHandle = true,
+  handleSize = 30,
+  handleFactor = 2,
+  handleFocusOpacity = 0.2,
+  handleColor = "#FFF",
+  min = 0,
+  max = 100,
+  steps = 1,
+  showValue = false,
+  formatValue,
+  vertical = false,
+  minDistance = 5,
+  handleProps = {},
+  springConfig = {}
+}) => {
+  const [handleDown, setHandleDown] = useState(false);
+  const { dist } = useSpring({
+    to: { dist: progress * size },
+    immediate: down,
+    ...springConfig
+  });
+
+  useUpdateEffect(() => {
+    if (handleDown === false) {
+      let newValue = getValueByProgress(min, max, progress);
+      if ((newValue / steps) % 1 != 0) {
+        newValue = Math.round(newValue / steps) * steps;
+      }
+      setProgress(getProgress(min, max, newValue), false);
+    }
+  }, [handleDown]);
+
+  const bindGesture = useGesture(
+    {
+      onMoveShouldSetPanResponderCapture: (e, { dy, dx }) => {
+        const allow = Math.abs(vertical ? dy : dx) > minDistance;
+        return allow;
+      },
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderGrant: (e, { dy, dx }) => {
+        setDown(true);
+        setHandleDown(true);
+      },
+      onPanResponderMove: (e, { dy, dx }) => {
+        const dist = vertical ? dy : dx;
+        const currentPosition = progress * size + dist;
+        let newProgress = getProgress(0, size, currentPosition);
+        if (newProgress < min) {
+          newProgress = min;
+        } else if (newProgress > 1) {
+          newProgress = 1;
+        }
+        setProgress(newProgress);
+      },
+      onPanResponderRelease: (e, { vx, vy }) => {
+        setHandleDown(false);
+      }
+    },
+    [size, down]
+  );
+
+  const leftAlign = -(
+    (handleSize * handleFactor - (vertical ? handleSize : 0)) /
+    2
+  );
+  const topAlign = -(
+    (handleSize * handleFactor - (vertical ? 0 : handleSize)) /
+    2
+  );
+
+  return (
+    <HandleWrap
+      l={leftAlign}
+      t={topAlign}
+      bg="primary"
+      bgAlpha={handleDown ? handleFocusOpacity : 0}
+      absolute
+      w={handleSize * handleFactor}
+      h={handleSize * handleFactor}
+      borderRadius={(handleSize * handleFactor) / 2}
+      style={{
+        transform: vertical ? [{ translateY: dist }] : [{ translateX: dist }]
+      }}
+      {...bindGesture}
+      flexCenter
+    >
+      <Handle
+        w={handleSize}
+        h={handleSize}
+        bg={handleColor}
+        borderRadius={handleSize / 2}
+        shadow={showHandle ? 5 : 0}
+        borderWidth={showHandle ? 1 : 0}
+        borderColor="text"
+        borderColorAlpha={0.05}
+        flexCenter
+        {...handleProps}
+      >
+        {showValue === true || (showValue === "onDown" && down) ? (
+          <Value
+            b={handleSize + valueGap}
+            pointerEvents="none"
+            flexCenter
+            absolute
+            minWidth={100}
+          >
+            <Button bg={progressColor} size={valueSize} rounded>
+              {formatValue
+                ? `${formatValue(
+                    Math.round(getValueByProgress(min, max, progress))
+                  )}`
+                : `${Math.round(getValueByProgress(min, max, progress))}`}
+            </Button>
+          </Value>
+        ) : null}
+      </Handle>
+    </HandleWrap>
+  );
+};
+
+const getProgressByValue = ({ value, min, max }) => {
+  const valueArray = [];
+  value.map(v => {
+    valueArray.push(getProgress(min, max, v));
+  });
+  return valueArray;
+};
+
+const getValuesByProgress = ({ progress, min, max }) => {
+  const valueArray = [];
+  progress.map(p => {
+    valueArray.push(getValueByProgress(min, max, p));
+  });
+  return valueArray.length > 1 ? valueArray : valueArray[0];
+};
+
+const Slider = withThemeProps(props => {
+  const {
     onChange,
     onSwipe,
     progressColor = "primary",
-    trackColor = "background",
+    trackColor = "input",
     trackHeight = 10,
     valueSize = 28,
     valueGap = 5,
@@ -55,7 +199,7 @@ const Slider = withThemeProps(
     max = 100,
     steps = 1,
     showValue = false,
-    valueSuffix,
+    formatValue,
     showTicks = true,
     ticks,
     tickGap = 5,
@@ -65,204 +209,162 @@ const Slider = withThemeProps(
     springConfig = {},
     renderTrack,
     ...rest
-  }) => {
-    const theme = useTheme();
-    const [down, setDown] = useState(false);
-    const [progress, setProgress] = useState(() =>
-      getProgress(min, max, value)
-    );
-    const { onLayout, width, height } = useLayout();
-    const size = vertical ? height : width;
+  } = props;
+  const value = Array.isArray(props.value) ? props.value : [props.value];
+  const theme = useTheme();
+  const [down, setDown] = useState(false);
+  const [progress, setProgress] = useState(() =>
+    getProgressByValue({ value, min, max })
+  );
+  const { onLayout, width, height } = useLayout();
+  const size = vertical ? height : width;
 
-    const { dist } = useSpring({
-      to: { dist: progress * size },
-      immediate: down,
-      ...springConfig
-    });
+  const { dist, left } = useSpring({
+    to: {
+      dist:
+        value.length > 1
+          ? progress[progress.length - 1] * size - progress[0] * size
+          : progress[0] * size,
+      left: value.length > 1 ? progress[0] * size : 0
+    },
+    immediate: down,
+    ...springConfig
+  });
 
-    useUpdateEffect(() => {
-      if (!down) {
-        setProgress(getProgress(min, max, value));
-      }
-    }, [value]);
+  useUpdateEffect(() => {
+    if (!down) {
+      setProgress(getProgressByValue({ value, min, max }));
+    }
+  }, [props.value]);
 
-    useUpdateEffect(() => {
-      if (down === false) {
-        let newValue = getValueByProgress(min, max, progress);
-        if ((newValue / steps) % 1 != 0) {
-          newValue = Math.round(newValue / steps) * steps;
-        }
-        setProgress(getProgress(min, max, newValue));
-        if (onChange) onChange(newValue);
-      }
-    }, [down]);
+  useUpdateEffect(() => {
+    if (down === false) {
+      const newValue = getValuesByProgress({ progress, min, max });
+      if (onChange) onChange(newValue);
+    }
+  }, [down]);
 
-    const bindGesture = useGesture(
-      {
-        onMoveShouldSetPanResponderCapture: (e, { dy, dx }) => {
-          const allow = Math.abs(vertical ? dy : dx) > minDistance;
-          return allow;
-        },
-        onPanResponderTerminationRequest: () => false,
-        onPanResponderGrant: (e, { dy, dx }) => {
-          setDown(true);
-        },
-        onPanResponderMove: (e, { dy, dx }) => {
-          const dist = vertical ? dy : dx;
-          const currentPosition = progress * size + dist;
-          let newProgress = getProgress(0, size, currentPosition);
-          if (newProgress < min) {
-            newProgress = min;
-          } else if (newProgress > 1) {
-            newProgress = 1;
-          }
-          let newValue = getValueByProgress(min, max, newProgress);
-          if (onSwipe) onSwipe(newProgress, newValue);
-          setProgress(newProgress);
-        },
-        onPanResponderRelease: (e, { vx, vy }) => {
-          setDown(false);
-        }
-      },
-      [size, down]
-    );
+  const handlePadding = showHandle ? handleSize / 2 : 0;
 
-    const leftAlign = -(
-      (handleSize * handleFactor - (vertical ? handleSize : 0)) /
-      2
-    );
-    const topAlign = -(
-      (handleSize * handleFactor - (vertical ? 0 : handleSize)) /
-      2
-    );
-
-    const handlePadding = showHandle ? handleSize / 2 : 0;
-
-    return (
-      <Wrap
-        w={vertical ? "auto" : "100%"}
-        h={vertical ? "100%" : "auto"}
-        pl={!vertical ? handlePadding : 0}
-        pr={!vertical ? handlePadding : 0}
-        pt={!vertical && showValue ? handlePadding : 0}
-        pb={!vertical && showTicks ? handlePadding : 0}
+  return (
+    <Wrap
+      w={vertical ? "auto" : "100%"}
+      h={vertical ? "100%" : "auto"}
+      pl={!vertical ? handlePadding : 0}
+      pr={!vertical ? handlePadding : 0}
+      pt={!vertical && showValue ? handlePadding : 0}
+      pb={!vertical && showTicks ? handlePadding : 0}
+      relative
+      row={vertical}
+      {...rest}
+    >
+      <TrackWrap
         relative
-        row={vertical}
-        {...rest}
+        flexCenter
+        w={vertical ? handleSize : "100%"}
+        h={vertical ? "100%" : handleSize}
+        onLayout={onLayout}
       >
-        <TrackWrap
-          relative
-          flexCenter
-          w={vertical ? handleSize : "100%"}
-          h={vertical ? "100%" : handleSize}
-          onLayout={onLayout}
+        <Track
+          w={vertical ? trackHeight : "100%"}
+          h={vertical ? "100%" : trackHeight}
+          bg={trackColor}
+          borderRadius={theme.globals.roundness}
+          overflow="hidden"
         >
-          <Track
-            w={vertical ? trackHeight : "100%"}
-            h={vertical ? "100%" : trackHeight}
-            bg={trackColor}
-            borderRadius={theme.globals.roundness}
-            overflow="hidden"
-          >
-            {renderTrack ? (
-              renderTrack(progress)
-            ) : (
-              <TrackProgress
-                w={vertical ? trackHeight : "0%"}
-                h={vertical ? "0%" : trackHeight}
-                bg={progressColor}
-                borderRadius={theme.globals.roundness}
-                style={{
-                  width: vertical ? "100%" : dist,
-                  height: !vertical ? "100%" : dist
-                }}
-              />
-            )}
-          </Track>
-          <HandleWrap
-            l={leftAlign}
-            t={topAlign}
-            bg="primary"
-            bgAlpha={down ? handleFocusOpacity : 0}
+          {renderTrack ? (
+            renderTrack(progress)
+          ) : (
+            <TrackProgress
+              w={vertical ? trackHeight : "0%"}
+              h={vertical ? "0%" : trackHeight}
+              bg={progressColor}
+              borderRadius={theme.globals.roundness}
+              style={{
+                width: vertical ? "100%" : dist,
+                height: !vertical ? "100%" : dist,
+                transform: vertical
+                  ? [{ translateY: left }]
+                  : [{ translateX: left }]
+              }}
+            />
+          )}
+        </Track>
+        {value.map((v, i) => {
+          return (
+            <HandleComp
+              key={`handle-${i}`}
+              progress={progress[i]}
+              setProgress={(value, down) => {
+                let newProgress = [...progress];
+                let newValue = value;
+                if (progress[i + 1] && newValue > progress[i + 1]) {
+                  newValue = progress[i + 1];
+                }
+                if (progress[i - 1] && newValue < progress[i - 1]) {
+                  newValue = progress[i - 1];
+                }
+                newProgress[i] = newValue;
+                setProgress(newProgress);
+                if (onSwipe) {
+                  let newValue = getValuesByProgress({
+                    progress: newProgress,
+                    min,
+                    max
+                  });
+                  onSwipe(newProgress, newValue);
+                }
+                if (down === false) {
+                  setDown(false);
+                }
+              }}
+              down={down}
+              setDown={setDown}
+              min={min}
+              max={max}
+              size={size}
+              {...props}
+              {...rest}
+            />
+          );
+        })}
+
+        {showTicks ? (
+          <TicksWrap
             absolute
-            w={handleSize * handleFactor}
-            h={handleSize * handleFactor}
-            borderRadius={(handleSize * handleFactor) / 2}
-            style={{
-              transform: vertical
-                ? [{ translateY: dist }]
-                : [{ translateX: dist }]
-            }}
-            {...bindGesture}
-            flexCenter
+            l={vertical ? handleSize + tickGap : -(handleSize / 2)}
+            t={vertical ? -(handleSize / 2) : handleSize + tickGap}
+            r={vertical ? "auto" : -(handleSize / 2)}
+            b={!vertical ? "auto" : -(handleSize / 2)}
+            justify="space-between"
+            row={!vertical}
+            pointerEvents="none"
           >
-            <Handle
-              w={handleSize}
-              h={handleSize}
-              bg={handleColor}
-              borderRadius={handleSize / 2}
-              shadow={5}
-              borderWidth={1}
-              borderColor="text"
-              borderColorAlpha={0.05}
-              flexCenter
-              {...handleProps}
-            >
-              {showValue === true || (showValue === "onDown" && down) ? (
-                <Value
-                  b={handleSize + valueGap}
-                  pointerEvents="none"
+            {getTicks({
+              min,
+              max,
+              ticks: ticks ? ticks : steps < 10 ? 10 : steps,
+              size,
+              handleSize
+            }).map((tick, index) => {
+              return (
+                <TickWrap
+                  w={!vertical ? handleSize : "auto"}
+                  h={!vertical ? "auto" : handleSize}
                   flexCenter
-                  absolute
-                  minWidth={100}
                 >
-                  <Button bg={progressColor} size={valueSize} rounded>
-                    {`${Math.round(getValueByProgress(min, max, progress))}${
-                      valueSuffix ? valueSuffix : ""
-                    }`}
-                  </Button>
-                </Value>
-              ) : null}
-            </Handle>
-          </HandleWrap>
-          {showTicks ? (
-            <TicksWrap
-              absolute
-              l={vertical ? handleSize + tickGap : -(handleSize / 2)}
-              t={vertical ? -(handleSize / 2) : handleSize + tickGap}
-              r={vertical ? "auto" : -(handleSize / 2)}
-              b={!vertical ? "auto" : -(handleSize / 2)}
-              justify="space-between"
-              row={!vertical}
-              pointerEvents="none"
-            >
-              {getTicks({
-                min,
-                max,
-                ticks: ticks ? ticks : steps < 10 ? 10 : steps,
-                size,
-                handleSize
-              }).map((tick, index) => {
-                return (
-                  <TickWrap
-                    w={!vertical ? handleSize : "auto"}
-                    h={!vertical ? "auto" : handleSize}
-                    flexCenter
-                  >
-                    <Tick color="text" font="caption">
-                      {tick}
-                    </Tick>
-                  </TickWrap>
-                );
-              })}
-            </TicksWrap>
-          ) : null}
-        </TrackWrap>
-      </Wrap>
-    );
-  },
-  "Slider"
-);
+                  <Tick color="text" font="caption">
+                    {tick}
+                  </Tick>
+                </TickWrap>
+              );
+            })}
+          </TicksWrap>
+        ) : null}
+      </TrackWrap>
+    </Wrap>
+  );
+}, "Slider");
 
 Slider.propTypes = {
   value: PropTypes.number,
@@ -281,7 +383,7 @@ Slider.propTypes = {
   max: PropTypes.number,
   steps: PropTypes.number,
   showValue: PropTypes.oneOf([PropTypes.bool, "onDown"]),
-  valueSuffix: PropTypes.string,
+  formatValue: PropTypes.func,
   showTicks: PropTypes.bool,
   ticks: PropTypes.number,
   tickGap: PropTypes.number,

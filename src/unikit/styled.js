@@ -1,10 +1,15 @@
-import React, { useContext, forwardRef } from "react";
-import scStyled, { ThemeContext, withTheme } from "styled-components/native";
+import * as React from "react";
+import { useContext, forwardRef } from "react";
+import scStyled, {
+  ThemeProvider,
+  ThemeContext,
+  withTheme
+} from "styled-components/native";
 import * as RN from "react-native";
 import parseStyle from "./parseStyle";
 import hoistStatics from "hoist-non-react-statics";
 
-export { withTheme };
+export { withTheme, ThemeProvider };
 
 export const useTheme = () => useContext(ThemeContext);
 

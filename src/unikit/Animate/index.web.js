@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { View } from "react-native";
 
 import { withThemeProps } from "../styled";
 import Visible from "../Visible";
@@ -95,7 +94,7 @@ const Animate = withThemeProps(
             offset={offset}
           >
             {({ isVisible }) => {
-              return <View />;
+              return <div />;
             }}
           </Visible>
           {AnimatedComp}

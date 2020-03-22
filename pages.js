@@ -384,7 +384,7 @@ const pages = [
     title: "Slider",
     from: "Input",
     group: "Inputs",
-    smallCode: `<Input.Slider w="80%" steps={20} value={30}  />`,
+    smallCode: `<Input.Slider w="80%" steps={20} value={30} />`,
     code: `<Flex align="center">
     <Input.Slider showValue="onDown" w="80%" steps={20} value={20} />
     <Input.Slider
@@ -392,7 +392,7 @@ const pages = [
       w="80%"
       value={20}
       mt={100}
-      onChange={value => alert(value)}
+      onChange={value => console.log(value)}
       handleFocusOpacity={0}
       showTicks={false}
       trackHeight={50}
@@ -400,7 +400,7 @@ const pages = [
       showHandle={false}
       handleColor="transparent"
     />
-    <Input.Slider showValue mt={100} w="80%" steps={20} value={20} />
+    <Input.Slider showValue formatValue={v => v + "%"}  mt={100} w="80%" steps={20} value={[20, 40]} onChange={value => console.log(value)} />
     <Input.Slider mt={100} height={300} vertical steps={10} value={30} />
   </Flex>;`
   },

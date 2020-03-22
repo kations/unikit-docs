@@ -5,19 +5,12 @@ import { isDark, setObjValue, getObjValue } from "./util";
 import styled, { useTheme, withTheme } from "./styled";
 import Box from "./Box";
 
-import {
-  useDimensions,
-  useGesture,
-  useDebounce,
-  useScaledSize,
-  usePrevious,
-  useInterval
-} from "./hooks";
-
 export * from "./Elements";
 
 const isWeb = Platform.OS === "web";
 const Touchable = styled.TouchableOpacity();
+
+export * from "./hooks";
 
 export {
   Touchable,
@@ -27,14 +20,9 @@ export {
   useTheme,
   withTheme,
   tc as color,
+  tc as tinycolor,
   setObjValue,
   getObjValue,
-  useDimensions,
-  usePrevious,
-  useScaledSize,
-  useGesture,
-  useDebounce,
-  useInterval,
   isWeb
 };
 

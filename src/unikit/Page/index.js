@@ -63,7 +63,9 @@ export function Page({
       {...rest}
     >
       {renderHeader ? renderHeader(top) : null}
-      <Scroller {...(scrollable ? ScrollerProps : {})}>{children}</Scroller>
+      <Scroller {...(scrollable ? ScrollerProps : {})}>
+        {children instanceof Function ? children(ScrollerProps) : children}
+      </Scroller>
       {renderFooter ? renderFooter(top) : null}
     </PageWrap>
   );

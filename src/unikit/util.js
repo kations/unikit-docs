@@ -23,7 +23,7 @@ export const getObjValue = (obj, path) => {
 };
 
 export const isDark = colorString => {
-  return tc(colorString).isValid() && tc(colorString).getBrightness() < 175;
+  return tc(colorString).isValid() && tc(colorString).getBrightness() < 155;
 };
 
 export const canUseDOM = !!(

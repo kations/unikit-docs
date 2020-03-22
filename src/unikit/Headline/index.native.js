@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Platform } from "react-native";
 import PropTypes from "prop-types";
 import { animated, useTransition } from "react-spring/native";
 
@@ -10,8 +9,6 @@ import Box from "../Box";
 
 const AnimatedView = animated(styled.View({}));
 
-const Animated = animated(Text);
-
 const AnimatedText = ({ strings = [], level = 1, animateType, ...rest }) => {
   const transitions = useTransition(strings, data => data, {
     from: { opacity: 0, y: 100, x: 0 },
@@ -21,33 +18,19 @@ const AnimatedText = ({ strings = [], level = 1, animateType, ...rest }) => {
     unique: false,
     trail: 400 / strings.length
   });
-  if (Platform.OS !== "web") {
-    return transitions.map(({ item, props: { opacity, x, y }, key }, index) => (
-      <AnimatedView
-        key={`${key}-${index}`}
-        style={{
-          opacity: opacity,
-          transform: [{ translateY: y || 0 }, { translateX: x || 0 }]
-        }}
-      >
-        <Text level={level}>
-          {item}
-          {animateType === "word" ? " " : null}
-        </Text>
-      </AnimatedView>
-    ));
-  }
   return transitions.map(({ item, props: { opacity, x, y }, key }, index) => (
-    <Animated
+    <AnimatedView
       key={`${key}-${index}`}
       style={{
         opacity: opacity,
         transform: [{ translateY: y || 0 }, { translateX: x || 0 }]
       }}
     >
-      {item}
-      {animateType === "word" ? " " : null}
-    </Animated>
+      <Text level={level}>
+        {item}
+        {animateType === "word" ? " " : null}
+      </Text>
+    </AnimatedView>
   ));
 };
 
@@ -71,12 +54,8 @@ const Headline = withThemeProps(
       var splittedString = children.split(animateType === "word" ? " " : "");
       return (
         <Text
-          {...(Platform.OS !== "web" ? { as: Box } : {})}
-          style={
-            Platform.OS !== "web"
-              ? { ...style, ...{ flexDirection: "row" } }
-              : style
-          }
+          as={Box}
+          style={{ ...style, ...{ flexDirection: "row" } }}
           level={level}
           {...rest}
         >

@@ -1,8 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { ThemeProvider } from "styled-components/native";
 import tc from "tinycolor2";
 
 import Alert from "./Alert";
+import { ThemeProvider } from "./styled";
 import { PortalProvider, PortalExit } from "./Portal";
 import { useDimensions } from "./hooks";
 import { rem } from "./util";
