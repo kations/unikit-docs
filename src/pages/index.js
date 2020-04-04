@@ -1,9 +1,11 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import * as unikit from "../unikit";
 
 import {
   Flex,
   Button,
+  Input,
+  Form,
   Page,
   H1,
   B,
@@ -12,20 +14,50 @@ import {
   H5,
   P,
   Code,
-  Animate,
   Grid,
-  isWeb
+  isWeb,
+  isAndroid,
+  Animate
 } from "../unikit";
+import { WheelPicker } from "../unikit/Input/DatePicker";
 import { Wrapper, Link } from "../components";
 import Playground from "../components/Playground";
 import { pages } from "../../pages";
+import { useInterval } from "../unikit/hooks";
+import { Platform } from "react-native";
 
 const getComponentsByGroup = (array, group) => {
   return array.filter(item => item.group === group);
 };
 
 export default function App() {
+  const [vis, setVis] = useState(true);
   const groups = ["UI", "Inputs", "Primitives"];
+
+  //if (Platform.OS === "ios") return null;
+
+  // useInterval(() => {
+  //   setVis(!vis);
+  // }, 3000);
+
+  // return (
+  //   <Page>
+  //     <Animate bg="primary" w={100} h={54} />
+  //     <H1 animate>Das ist ein Test</H1>
+
+  //     <Form onSubmit={doc => alert(JSON.stringify(doc))}>
+  //       <Input
+  //         label="Color"
+  //         w="100%"
+  //         bg="input"
+  //         field="colosdfdsr"
+  //         type="switch"
+  //       />
+  //       <Input label="Color" w="100%" bg="input" field="colosr" type="color" />
+  //     </Form>
+  //   </Page>
+  // );
+
   return (
     <Page scrollable={!isWeb}>
       {isWeb ? (

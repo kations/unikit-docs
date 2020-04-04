@@ -49,7 +49,7 @@ const DefaultTheme = {
       fontSize: rem(1.5)
     },
     h5: {
-      fontSize: rem(1)
+      fontSize: rem(1.25)
     },
     p: {
       fontSize: rem(1),

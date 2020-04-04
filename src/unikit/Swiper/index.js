@@ -5,22 +5,20 @@ import React, {
   useImperativeHandle
 } from "react";
 import PropTypes from "prop-types";
-import { animated, useSpring } from "react-spring/native";
 
 import styled, { withThemeProps } from "../styled";
 import { useLayout, useGesture, useInterval } from "../hooks";
 import { getProgress, getValueByProgress } from "../util";
 import Dots from "./dots";
+import { AnimatedView, useSpring } from "../Spring";
 
 const Wrapper = styled.View();
-const Item = animated(styled.View());
-const Track = animated(
-  styled.View(({ gesture }) => ({
-    web: {
-      cursor: gesture ? "grab" : "auto"
-    }
-  }))
-);
+const Item = AnimatedView;
+const Track = styled(AnimatedView)(({ gesture }) => ({
+  web: {
+    cursor: gesture ? "grab" : "auto"
+  }
+}));
 
 export function Swiper(
   {
@@ -35,7 +33,7 @@ export function Swiper(
     autoplayTimeout = 3000,
     minDistance = 5,
     triggerDistance = 0.2,
-    springConfig = { config: {} },
+    springConfig = {},
     onSwipe,
     onSwipeEnd,
     ...rest
@@ -48,10 +46,10 @@ export function Swiper(
   const items = React.Children.toArray(children);
   const { onLayout, width, height } = useLayout();
 
-  const { dist } = useSpring({
-    to: { dist: vertical ? -(index * height) : -(index * width) },
+  const dist = useSpring({
+    to: vertical ? -(index * height) : -(index * width),
     immediate: down,
-    ...springConfig
+    config: springConfig
   });
 
   useInterval(

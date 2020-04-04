@@ -82,7 +82,7 @@ const Text = withThemeProps(
   "TextInput"
 );
 
-Text.defaultProps = {
+Text.defaultPropTypes = {
   placeholderColor: "placeholder"
 };
 

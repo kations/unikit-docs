@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { TouchableOpacity } from "react-native";
 
-import styled, { useTheme } from "../styled";
-
+import { useTheme } from "../styled";
 import Box from "../Box";
 import Flex from "../Flex";
 import Icon from "../Icon";

@@ -55,7 +55,7 @@ Grid.propTypes = {
   itemStyle: PropTypes.object
 };
 
-Grid.defaultProps = {
+Grid.defaultPropTypes = {
   min: 250,
   gap: 5,
   outerGap: false,

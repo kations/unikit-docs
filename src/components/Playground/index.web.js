@@ -18,7 +18,8 @@ import {
   Button,
   Tabs,
   useInterval,
-  isWeb
+  isWeb,
+  useTheme
 } from "../../unikit";
 import icons from "../../unikit/Icon/icons";
 
@@ -68,6 +69,7 @@ export default function Table({ code, scope, ...rest }) {
     <LiveProvider
       code={code}
       scope={{
+        useTheme,
         Fragment,
         Box,
         Flex,

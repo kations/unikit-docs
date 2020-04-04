@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import * as PropTypes from "prop-types";
-import { animated, useSpring } from "react-spring/native";
 
 import styled, { withThemeProps } from "../styled";
 import { useLayout, useGesture, useInterval } from "../hooks";
+import { useSpring, animated } from "../Spring/useSpringOld";
 
 import Box from "../Box";
 import Text from "../Text";
@@ -98,6 +98,6 @@ Collapsible.propTypes = {
   children: PropTypes.node
 };
 
-Collapsible.defaultProps = {};
+Collapsible.defaultPropTypes = {};
 
 export default Collapsible;

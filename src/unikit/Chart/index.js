@@ -1,10 +1,10 @@
 import React, { Fragment, useRef, useEffect } from "react";
-import { animated, useTransition } from "react-spring/native";
 import { TouchableOpacity, View } from "react-native";
 import PropTypes from "prop-types";
 
 import styled, { useTheme } from "../styled";
 import Box from "../Box";
+import { useTransition, animated } from "../Spring/useSpringOld";
 
 const ChartWrap = styled(Box)({
   width: "100%",
@@ -409,7 +409,7 @@ Comp.propTypes = {
   onChange: PropTypes.func
 };
 
-Comp.defaultProps = {
+Comp.defaultPropTypes = {
   labelProps: {
     style: {
       color: "text"

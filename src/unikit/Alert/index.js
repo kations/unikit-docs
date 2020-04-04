@@ -1,11 +1,11 @@
-import React, { useState, Fragment, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Platform, SafeAreaView } from "react-native";
-import { useTransition, animated } from "react-spring/native";
 import * as PropTypes from "prop-types";
 
-import styled, { useTheme, withThemeProps } from "../styled";
+import styled, { withThemeProps } from "../styled";
 import Icon from "../Icon";
-import { isDark, isIphoneX } from "../util";
+import Button from "../Button";
+import { useTransition, animated } from "../Spring/useSpringOld";
 
 const Container = styled.View(({ from, gap }) => ({
   position: Platform.OS === "web" ? "fixed" : "absolute",
@@ -13,44 +13,26 @@ const Container = styled.View(({ from, gap }) => ({
   bottom: from === "bottom" ? 0 : "auto",
   top: from === "top" ? 0 : "auto",
   width: "100%",
-  zIndex: 500,
-  paddingHorizontal: gap,
-  paddingVertical: isIphoneX() ? gap / 2 + 25 : gap / 2
+  zIndex: 9999,
+  paddingHorizontal: gap
 }));
 
-const Message = animated(
-  styled.View(({ theme, gap, maxWidth }) => ({
-    flexBasis: "100%",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row",
-    marginVertical: gap / 2,
-    width: "100%",
-    maxWidth: maxWidth,
-    alignSelf: "center",
-    borderRadius: theme.globals.roundness
-  }))
-);
-
-const Text = styled.Text(({ color }) => ({
-  maxWidth: 400,
-  width: "100%",
-  padding: 20,
-  color: color
-}));
+const Message = animated(styled.View());
 
 let id = 0;
 
 const Alert = withThemeProps(
   ({
+    theme,
     alert,
     timeout = 2000,
     from = "top",
     gap = 15,
     maxWidth = 700,
+    offset = 20,
+    onAlert,
     ...rest
   }) => {
-    const theme = useTheme();
     const [items, setItems] = useState([]);
 
     const transitions = useTransition(items, items => items.key, {
@@ -60,62 +42,51 @@ const Alert = withThemeProps(
       onRest: item =>
         setTimeout(() => {
           setItems(state => state.filter(i => i.key !== item.key));
-        }, timeout)
+        }, item.timeout || timeout)
     });
 
     useEffect(() => {
       if (alert) {
         if (from === "bottom") {
-          setItems(state => [
-            ...state,
-            { key: id++, message: alert.message, type: alert.type }
-          ]);
+          setItems(state => [...state, { key: id++, ...alert }]);
         } else {
-          setItems(state => [
-            { key: id++, message: alert.message, type: alert.type },
-            ...state
-          ]);
+          setItems(state => [{ key: id++, ...alert }, ...state]);
         }
+        if (onAlert) onAlert(alert);
       }
     }, [alert, from]);
 
     return (
-      <Container from={from} gap={gap} pointerEvents="box-none" {...rest}>
+      <Container
+        from={from}
+        gap={gap}
+        py={gap / 2 + offset}
+        pointerEvents="box-none"
+        {...rest}
+      >
         {from === "top" ? <SafeAreaView collapsable={false} /> : null}
         {transitions.map(({ item, props, key }) => (
-          <Message
-            bg={item.type || "surface"}
-            key={key}
-            style={props}
-            from={from}
-            gap={gap}
-            maxWidth={maxWidth}
-            shadow={3}
-            align="center"
-          >
-            <Text
-              color={
-                isDark(theme.colors[item.type || "surface"]) ? "#FFF" : "#000"
+          <Message w="auto" key={key} style={props} my={gap / 2} flexCenter>
+            <Button
+              w="auto"
+              maxWidth={maxWidth}
+              bg={item.type || "surface"}
+              renderRight={
+                <Icon
+                  name="x"
+                  bgAware={theme.colors[item.type] || item.type}
+                  size={20}
+                  ml={gap}
+                  bgAware={item.type || "surface"}
+                  onPress={e => {
+                    e.stopPropagation();
+                    setItems(state => state.filter(i => i.key !== item.key));
+                  }}
+                />
               }
             >
               {item.message}
-            </Text>
-            <Icon
-              name="x"
-              style={{
-                position: "absolute",
-                top: 17,
-                right: 15
-              }}
-              size={20}
-              color={
-                isDark(theme.colors[item.type || "surface"]) ? "#FFF" : "#000"
-              }
-              onPress={e => {
-                e.stopPropagation();
-                setItems(state => state.filter(i => i.key !== item.key));
-              }}
-            />
+            </Button>
           </Message>
         ))}
         {/* {from === "bottom" ? <SafeAreaView collapsable={false} /> : null} */}
@@ -130,10 +101,11 @@ Alert.propTypes = {
   timeout: PropTypes.number,
   from: PropTypes.string,
   gap: PropTypes.number,
-  maxWidth: PropTypes.number
+  maxWidth: PropTypes.number,
+  onAlert: PropTypes.func
 };
 
-Alert.defaultProps = {
+Alert.defaultPropTypes = {
   timeout: 2000,
   from: "top",
   gap: 15,

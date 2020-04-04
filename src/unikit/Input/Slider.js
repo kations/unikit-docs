@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useSpring, animated } from "react-spring/native";
 import * as PropTypes from "prop-types";
 
 import { useLayout, useGesture, useUpdateEffect } from "../hooks";
 import styled, { withThemeProps, useTheme } from "../styled";
 import { getProgress, getValueByProgress } from "../util";
 import Button from "../Button";
+import { AnimatedView, useSpring } from "../Spring";
 
 const Wrap = styled.View();
 const TrackWrap = styled.View();
@@ -13,16 +13,14 @@ const TicksWrap = styled.View({ web: { userSelect: "none" } });
 const TickWrap = styled.View();
 const Tick = styled.Text();
 const Track = styled.View();
-const TrackProgress = animated(styled.View());
+const TrackProgress = styled(AnimatedView)();
 const Value = styled.View();
 const Handle = styled.View();
-const HandleWrap = animated(
-  styled.View({
-    web: {
-      cursor: "grab"
-    }
-  })
-);
+const HandleWrap = styled(AnimatedView)({
+  web: {
+    cursor: "grab"
+  }
+});
 
 const getTicks = ({ min, max, ticks, size, handleSize }) => {
   const arr = [min];
@@ -61,10 +59,10 @@ const HandleComp = ({
   springConfig = {}
 }) => {
   const [handleDown, setHandleDown] = useState(false);
-  const { dist } = useSpring({
-    to: { dist: progress * size },
+  const dist = useSpring({
+    to: progress * size,
     immediate: down,
-    ...springConfig
+    config: springConfig
   });
 
   useUpdateEffect(() => {
@@ -92,11 +90,12 @@ const HandleComp = ({
         const dist = vertical ? dy : dx;
         const currentPosition = progress * size + dist;
         let newProgress = getProgress(0, size, currentPosition);
-        if (newProgress < min) {
-          newProgress = min;
+        if (newProgress < 0) {
+          newProgress = 0;
         } else if (newProgress > 1) {
           newProgress = 1;
         }
+
         setProgress(newProgress);
       },
       onPanResponderRelease: (e, { vx, vy }) => {
@@ -219,16 +218,20 @@ const Slider = withThemeProps(props => {
   const { onLayout, width, height } = useLayout();
   const size = vertical ? height : width;
 
-  const { dist, left } = useSpring({
-    to: {
-      dist:
-        value.length > 1
-          ? progress[progress.length - 1] * size - progress[0] * size
-          : progress[0] * size,
-      left: value.length > 1 ? progress[0] * size : 0
-    },
+  const dist = useSpring({
+    to:
+      value.length > 1
+        ? progress[progress.length - 1] * size - progress[0] * size
+        : progress[0] * size,
+
     immediate: down,
-    ...springConfig
+    config: springConfig
+  });
+
+  const left = useSpring({
+    to: value.length > 1 ? progress[0] * size : 0,
+    immediate: down,
+    config: springConfig
   });
 
   useUpdateEffect(() => {
@@ -312,7 +315,9 @@ const Slider = withThemeProps(props => {
                     min,
                     max
                   });
-                  onSwipe(newProgress, newValue);
+                  setTimeout(() => {
+                    onSwipe(newProgress, newValue);
+                  }, 10);
                 }
                 if (down === false) {
                   setDown(false);
@@ -394,7 +399,7 @@ Slider.propTypes = {
   renderTrack: PropTypes.func
 };
 
-Slider.defaultProps = {
+Slider.defaultPropTypes = {
   value: 0,
   progressColor: "primary",
   trackColor: "background",

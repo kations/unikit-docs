@@ -1,11 +1,11 @@
 import React, { Fragment, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Image as Img, Platform } from "react-native";
-import { useSpring, animated } from "react-spring/native";
 
 import styled from "../styled";
 import Box from "../Box";
 import Visible from "../Visible";
+import { useSpring, animated } from "../Spring/useSpringOld";
 
 const ImageWrap = styled(Box)({
   backgroundColor: "surface",

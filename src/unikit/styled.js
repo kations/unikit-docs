@@ -15,13 +15,13 @@ export const useTheme = () => useContext(ThemeContext);
 
 export const useThemeProps = (props, name) => {
   const theme = useTheme();
-  return Object.assign({}, theme.globals[name] || {}, props);
+  return Object.assign({}, theme[name] || {}, props);
 };
 
 export const withThemeProps = (Component, name) => {
   const WithTheme = React.forwardRef((props, ref) => {
     const theme = useContext(ThemeContext);
-    const themeProps = Object.assign({}, theme[name], props);
+    const themeProps = Object.assign({}, theme[name] || {}, props);
 
     if (process.env.NODE_ENV !== "production" && !theme) {
       // eslint-disable-next-line no-console

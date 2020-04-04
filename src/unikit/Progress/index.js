@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Svg, { Path, G } from "swgs";
-import { useSpring, animated } from "react-spring/native";
 import PropTypes from "prop-types";
 import { View } from "react-native";
 
 import styled, { useTheme, withThemeProps } from "../styled";
 import { getProgress, getValueByProgress } from "../util";
+import { useSpring, animated } from "../Spring/useSpringOld";
 
 const Wrap = styled.View();
 const ValueWrap = styled.View({});

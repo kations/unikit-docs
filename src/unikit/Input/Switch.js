@@ -1,23 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { useSpring, animated } from "react-spring/native";
 import PropTypes from "prop-types";
-import { TouchableOpacity, Platform } from "react-native";
-
+import { Platform } from "react-native";
+import { PanGestureHandler, State } from "react-native-gesture-handler";
 import styled, { useTheme } from "../styled";
-import Box from "../Box";
+import { useGesture, useUpdateEffect } from "../hooks";
 
-const Switch = animated(
-  styled(Box)(({ size, radius, gap }) => ({
-    position: "relative",
-    display: Platform.OS === "web" ? "inline-block" : "flex",
-    overflow: "hidden",
-    width: size * 2 - gap,
-    height: size,
-    padding: gap,
-    borderRadius: radius || size,
-    margin: 0
-  }))
-);
+import {
+  AnimatedTouchable,
+  AnimatedView,
+  intColor,
+  useSpring,
+  Animated
+} from "../Spring";
+
+const Switch = styled(AnimatedTouchable)(({ size, radius, gap }) => ({
+  position: "relative",
+  display: Platform.OS === "web" ? "inline-block" : "flex",
+  overflow: "hidden",
+  height: size,
+  padding: gap,
+  borderRadius: radius || size,
+  margin: 0,
+  web: {
+    cursor: "pointer",
+    transitionProperty: "all",
+    transitionDuration: "250ms"
+  }
+}));
 
 const Track = styled.View({
   position: "relative",
@@ -25,16 +34,24 @@ const Track = styled.View({
   height: "100%"
 });
 
-const Circle = animated(
-  styled(Box)(({ size, radius, gap }) => ({
-    position: "absolute",
-    top: 0,
-    width: size - gap * 2,
-    height: size - gap * 2,
-    borderRadius: radius ? radius - gap / 2 : size,
-    backgroundColor: "#fff"
-  }))
-);
+const Touchable = styled.TouchableOpacity({
+  absoluteFill: true,
+  web: {
+    cursor: "grab"
+  }
+});
+
+const Circle = styled(AnimatedView)(({ size, radius, gap }) => ({
+  position: "absolute",
+  top: 0,
+  width: size - gap * 2,
+  height: size - gap * 2,
+  borderRadius: radius ? radius - gap / 2 : size,
+  backgroundColor: "#fff",
+  web: {
+    cursor: "grab"
+  }
+}));
 
 const Comp = ({
   value,
@@ -49,16 +66,72 @@ const Comp = ({
 }) => {
   const theme = useTheme();
 
-  const [active, setActive] = useState(value || false);
+  const TRACK_WIDTH = size * 2 - gap;
+  const LEFT = size - gap;
+  const ACTIVE_COLOR = theme.colors[activeTrackColor] || activeTrackColor;
+  const COLOR = theme.colors[trackColor] || trackColor;
 
-  const { left, backgroundColor } = useSpring({
-    to: {
-      left: active ? size - gap : 0,
-      backgroundColor: active
-        ? theme.colors[activeTrackColor] || activeTrackColor
-        : theme.colors[trackColor] || trackColor
+  const [down, setDown] = useState(false);
+  const [active, setActive] = useState(value || false);
+  const [move, setMove] = useState(active ? LEFT : 0);
+
+  const x = useSpring({
+    to: move,
+    immediate: down
+  });
+
+  useUpdateEffect(() => {
+    setMove(active ? LEFT : 0);
+    if (onChange) onChange(active);
+  }, [active]);
+
+  useUpdateEffect(() => {
+    if (down === false) {
+      const active = move > LEFT / 2;
+      setMove(active ? LEFT : 0);
+      setActive(active);
+    }
+  }, [down]);
+
+  const bindGesture = useGesture(
+    {
+      onMoveShouldSetPanResponderCapture: (e, { dy, dx }) => {
+        const allow = Math.abs(dx) > 5;
+        return allow;
+      },
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderGrant: (e, { dy, dx }) => {
+        setDown(true);
+      },
+      onPanResponderMove: (e, { dy, dx }) => {
+        let newMove = move + dx;
+        if (newMove < 0) {
+          newMove = 0;
+        } else if (newMove > LEFT) {
+          newMove = LEFT;
+        }
+
+        setMove(newMove);
+      },
+      onPanResponderRelease: (e, { vx, vy }) => {
+        setDown(false);
+      }
     },
-    config: { duration: 300 }
+    [move, down]
+  );
+
+  // const backgroundColor = useColorAnimation({
+  //   value: active
+  //     ? theme.colors[activeTrackColor] || activeTrackColor
+  //     : theme.colors[trackColor] || trackColor,
+  //   aniValue: x,
+  //   range: [0, LEFT]
+  // });
+
+  const backgroundColor = intColor(x, {
+    color: active ? ACTIVE_COLOR : COLOR,
+    inputRange: [0, LEFT],
+    outputRange: [COLOR, ACTIVE_COLOR]
   });
 
   useEffect(() => {
@@ -71,31 +144,37 @@ const Comp = ({
 
   return (
     <Switch
-      as={TouchableOpacity}
-      style={{ ...style, backgroundColor: backgroundColor }}
+      style={{
+        ...style,
+        width: TRACK_WIDTH,
+        backgroundColor: backgroundColor
+      }}
       activeOpacity={0.8}
       size={size}
       radius={radius}
       gap={gap}
       onPress={() => {
-        const newValue = !active;
-        setActive(newValue);
-        setTimeout(() => {
-          if (onChange) {
-            onChange(newValue);
-          }
-        }, 299);
+        setActive(!active);
       }}
       {...rest}
     >
       <Track>
         <Circle
-          style={{ transform: [{ translateX: left }] }}
+          style={{
+            transform: [{ translateX: x }]
+          }}
           size={size}
           radius={radius}
           gap={gap}
           shadow={5}
-        />
+          {...bindGesture}
+        >
+          <Touchable
+            onPress={() => {
+              setActive(!active);
+            }}
+          />
+        </Circle>
       </Track>
     </Switch>
   );

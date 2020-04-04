@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Dimensions, TouchableOpacity, Platform } from "react-native";
-import { useTransition, animated } from "react-spring/native";
 import PropTypes from "prop-types";
 
 import styled, { withThemeProps, useTheme } from "../styled";
+import { useTransition, animated } from "../Spring/useSpringOld";
+
 import Flex from "../Flex";
 import Switch from "./Switch";
 import Text from "./Text";

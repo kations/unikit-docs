@@ -25,7 +25,12 @@ export default function Table({ component, ...rest }) {
         </Flex>
       </Flex>
       {Object.keys(types).map(key => {
-        const { type, required, defaultValue } = types[key];
+        const { type, required } = types[key];
+
+        const defaultValue =
+          component.defaultPropTypes && component.defaultPropTypes[key]
+            ? component.defaultPropTypes[key]
+            : "";
         return (
           <Flex bg="primary" bgAlpha={0.1} p={20} mt={3} w="100%" row>
             <Flex flex={1}>
@@ -40,9 +45,7 @@ export default function Table({ component, ...rest }) {
               </Text>
             </Flex>
             <Flex flex={1}>
-              <Text>
-                {defaultValue ? getDefaultValue(defaultValue.value) : ""}
-              </Text>
+              <Text>{defaultValue ? getDefaultValue(defaultValue) : ""}</Text>
             </Flex>
           </Flex>
         );

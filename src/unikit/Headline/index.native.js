@@ -1,15 +1,21 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { animated, useTransition } from "react-spring/native";
 
 import styled, { withThemeProps } from "../styled";
 import Visible from "../Visible";
 import Text from "../Text";
 import Box from "../Box";
+import { useTransition, animated } from "../Spring/useSpringOld";
 
 const AnimatedView = animated(styled.View({}));
 
-const AnimatedText = ({ strings = [], level = 1, animateType, ...rest }) => {
+const AnimatedText = ({
+  strings = [],
+  level = 1,
+  animateType,
+  color,
+  ...rest
+}) => {
   const transitions = useTransition(strings, data => data, {
     from: { opacity: 0, y: 100, x: 0 },
     leave: { opacity: 0, y: 100, x: 0 },
@@ -26,7 +32,7 @@ const AnimatedText = ({ strings = [], level = 1, animateType, ...rest }) => {
         transform: [{ translateY: y || 0 }, { translateX: x || 0 }]
       }}
     >
-      <Text level={level}>
+      <Text level={level} color={color}>
         {item}
         {animateType === "word" ? " " : null}
       </Text>
@@ -44,6 +50,7 @@ const Headline = withThemeProps(
     onVisible,
     stayVisible = true,
     delay = 100,
+    color = "text",
     from,
     to,
     config,
@@ -57,6 +64,7 @@ const Headline = withThemeProps(
           as={Box}
           style={{ ...style, ...{ flexDirection: "row" } }}
           level={level}
+          color={color}
           {...rest}
         >
           {onVisible ? (
@@ -76,6 +84,7 @@ const Headline = withThemeProps(
           <AnimatedText
             strings={(onVisible && visible) || !onVisible ? splittedString : []}
             animateType={animateType}
+            color={color}
             {...rest}
           />
         </Text>
@@ -83,7 +92,7 @@ const Headline = withThemeProps(
     }
 
     return (
-      <Text level={level} style={style} {...rest}>
+      <Text level={level} style={style} color={color} {...rest}>
         {children}
       </Text>
     );
@@ -99,7 +108,7 @@ Headline.propTypes = {
   animateType: PropTypes.oneOf(["char", "word"])
 };
 
-Headline.defaultProps = {
+Headline.defaultPropTypes = {
   level: 1,
   animateType: "char",
   stayVisible: true,

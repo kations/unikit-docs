@@ -140,9 +140,9 @@ const Button = withThemeProps(
               <LoadingWrap pointerEvents="none">
                 <Progress
                   trackColor="transparent"
-                  circleColor={textColor}
+                  progressColor={textColor}
                   size={size / 2}
-                  circleWidth={2}
+                  progressWidth={2}
                   value={progress}
                   loading={loading}
                 />
@@ -193,7 +193,7 @@ Button.propTypes = {
   progress: PropTypes.number
 };
 
-Button.defaultProps = {
+Button.defaultPropTypes = {
   size: 50,
   bg: "primary",
   labelProps: {}

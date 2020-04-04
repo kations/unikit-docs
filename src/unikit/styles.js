@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-const defaultProp = PropTypes.oneOf([PropTypes.string, PropTypes.number]);
+const defaultProp = PropTypes.oneOfType([PropTypes.string, PropTypes.number]);
 
 export const uniStyles = {
   //bool
@@ -50,13 +50,13 @@ export const styles = {
   ...uniStyles,
   //defaults
   width: {},
-  fontSize: {},
+  fontSize: { type: defaultProp },
   color: { color: true },
   fontFamily: {},
   textAlign: {},
-  lineHeight: {},
-  fontWeight: {},
-  letterSpacing: {},
+  lineHeight: { type: defaultProp },
+  fontWeight: { type: defaultProp },
+  letterSpacing: { type: defaultProp },
   display: {},
   maxWidth: {},
   minWidth: {},

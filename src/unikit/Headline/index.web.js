@@ -63,7 +63,7 @@ Headline.propTypes = {
   animateType: PropTypes.oneOf(["char", "word"])
 };
 
-Headline.defaultProps = {
+Headline.defaultPropTypes = {
   level: 1,
   animateType: "char",
   stayVisible: true,

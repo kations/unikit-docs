@@ -1,6 +1,11 @@
 import React, { useState, Fragment, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Platform, DatePickerIOS } from "react-native";
+import {
+  Platform,
+  DatePickerIOS,
+  DatePickerAndroid,
+  TimePickerAndroid
+} from "react-native";
 import dayjs from "dayjs";
 import { createElement } from "react-native";
 
@@ -11,6 +16,7 @@ import Box from "../Box";
 import Button from "../Button";
 import Overlay from "../Overlay";
 import Picker from "../Picker";
+import { useUpdateEffect } from "../hooks";
 
 const DateInput = props => createElement("input", props);
 
@@ -126,26 +132,26 @@ const MINUTES = () => {
   return minutes;
 };
 
-const WheelPicker = ({
+export const WheelPicker = ({
   min,
   max,
   onChange,
-  currentDate,
+  value,
   yearsOffset = 100,
   type = "date",
   use24 = true
 }) => {
-  const currentMonth = dayjs(currentDate).format(
-    type === "datetime" ? "MMM" : "MMMM"
-  );
-  const currentDay = parseInt(dayjs(currentDate).format("D"));
-  const currentYear = dayjs(currentDate).format("YYYY");
-  console.log({
-    currentDay,
-    currentMonth,
-    currentYear,
-    hour: parseInt(dayjs(currentDate).format("HH"))
-  });
+  const [date, setDate] = useState(value || new Date());
+  const currentMonth = dayjs(date).format(type === "datetime" ? "MMM" : "MMMM");
+  const currentDay = parseInt(dayjs(date).format("D"));
+  const currentYear = dayjs(date).format("YYYY");
+
+  useUpdateEffect(() => {
+    setTimeout(() => {
+      onChange(date);
+    }, 50);
+  }, [date]);
+
   return (
     <WheelWrap w="100%" mb={15} row>
       {type === "date" || type === "datetime" ? (
@@ -153,13 +159,12 @@ const WheelPicker = ({
           flex={1}
           value={currentDay}
           options={Array.from(
-            Array(parseInt(dayjs(currentDate).daysInMonth())).keys()
+            Array(parseInt(dayjs(date).daysInMonth())).keys()
           ).map(day => day + 1)}
           onChange={(value, index) =>
-            onChange(
-              dayjs(currentDate)
-                .startOf("month")
-                .add(index, "days")
+            setDate(
+              dayjs(date)
+                .date(index + 1)
                 .toDate()
             )
           }
@@ -172,8 +177,8 @@ const WheelPicker = ({
           value={currentMonth}
           options={MONTHS(type === "datetime")}
           onChange={(value, index) =>
-            onChange(
-              dayjs(currentDate)
+            setDate(
+              dayjs(date)
                 .month(index)
                 .toDate()
             )
@@ -187,8 +192,8 @@ const WheelPicker = ({
           value={currentYear}
           options={YEARS(yearsOffset)}
           onChange={value =>
-            onChange(
-              dayjs(currentDate)
+            setDate(
+              dayjs(date)
                 .year(parseInt(value))
                 .toDate()
             )
@@ -199,11 +204,11 @@ const WheelPicker = ({
       {type === "time" || type === "datetime" ? (
         <Picker
           flex={1}
-          value={parseInt(dayjs(currentDate).format("HH"))}
+          value={parseInt(dayjs(date).format("HH"))}
           options={HOURS(use24)}
           onChange={value =>
-            onChange(
-              dayjs(currentDate)
+            setDate(
+              dayjs(date)
                 .hour(parseInt(value))
                 .toDate()
             )
@@ -217,12 +222,12 @@ const WheelPicker = ({
       {type === "time" || type === "datetime" ? (
         <Picker
           flex={1}
-          value={parseInt(dayjs(currentDate).format("mm"))}
+          value={parseInt(dayjs(date).format("mm"))}
           format={v => (v < 10 ? `0${v}` : v)}
           options={MINUTES()}
           onChange={value =>
-            onChange(
-              dayjs(currentDate)
+            setDate(
+              dayjs(date)
                 .minute(parseInt(value))
                 .toDate()
             )
@@ -242,7 +247,7 @@ const DatePicker = ({
   textInputProps = {},
   overlayProps = {},
   doneText = "Close",
-  useNativePicker = false,
+  useNativePicker = true,
   min,
   max,
   ...rest
@@ -251,6 +256,49 @@ const DatePicker = ({
   const [show, setShow] = useState(false);
   const format = types[type].format;
   const date = value ? dayjs(value).toDate() : new Date();
+
+  async function openDatePicker() {
+    try {
+      const { action, year, month, day } = await DatePickerAndroid.open({
+        // Use `new Date()` for current date.
+        // May 25 2020. Month 0 is January.
+        date: date,
+        minDate: min,
+        maxDate: max
+      });
+      if (action !== DatePickerAndroid.dismissedAction) {
+        // Selected year, month (0-11), day
+        console.log({ action, year, month, day });
+        const newDate = dayjs(`${year}-${month + 1}-${day}`).toDate();
+        onChange(newDate);
+        if (type === "datetime") {
+          openTimePicker(newDate);
+        }
+      }
+    } catch ({ code, message }) {
+      console.warn("Cannot open date picker", message);
+    }
+  }
+
+  async function openTimePicker(newDate) {
+    try {
+      const { action, hour, minute } = await TimePickerAndroid.open({
+        hour: 14,
+        minute: 0,
+        is24Hour: false // Will display '2 PM'
+      });
+      if (action !== TimePickerAndroid.dismissedAction) {
+        const newDateWithTime = dayjs(newDate || date)
+          .set("hour", hour)
+          .set("minute", minute)
+          .toDate();
+        onChange(newDateWithTime);
+        // Selected hour (0-23), minute (0-59)
+      }
+    } catch ({ code, message }) {
+      console.warn("Cannot open time picker", message);
+    }
+  }
 
   return (
     <Fragment>
@@ -270,7 +318,15 @@ const DatePicker = ({
       ) : (
         <Touchable
           onPress={() => {
-            setShow(true);
+            if (Platform.OS === "android" && useNativePicker) {
+              if (type === "date" || type === "datetime") {
+                openDatePicker();
+              } else {
+                openTimePicker();
+              }
+            } else {
+              setShow(true);
+            }
           }}
           br={theme.globals.roundness}
           w="100%"
@@ -309,7 +365,7 @@ const DatePicker = ({
             />
           ) : (
             <WheelPicker
-              currentDate={date}
+              value={date}
               onChange={value => {
                 onChange(value);
               }}
@@ -333,5 +389,7 @@ DatePicker.propTypes = {
   onChange: PropTypes.func,
   textInputProps: PropTypes.object
 };
+
+DatePicker.WheelPicker = WheelPicker;
 
 export default DatePicker;

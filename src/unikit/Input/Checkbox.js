@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useSpring, animated } from "react-spring/native";
 import PropTypes from "prop-types";
 
 import styled from "../styled";
+import { useSpring, animated } from "../Spring/useSpringOld";
 
 const Checkbox = styled.TouchableOpacity(({ size, borderSize }) => ({
   width: size,

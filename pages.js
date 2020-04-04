@@ -35,6 +35,30 @@ const pages = [
     code: ``
   },
   {
+    path: "/dropdown",
+    title: "Dropdown",
+    from: "Dropdown",
+    group: "UI",
+    smallCode: `<Button>Dropdown</Button>`,
+    code: `<Dropdown
+    wrapperProps={{
+      w: 250,
+      r: 0,
+      t: 50
+    }}
+    content={<Button onPress={() => alert("onPress")}>Content</Button>}>
+    <Button>Dropdown</Button>
+    </Dropdown>`
+  },
+  {
+    path: "/calendar",
+    title: "Calendar",
+    from: "Calendar",
+    group: "UI",
+    smallCode: `<Calendar />`,
+    code: `<Flex w="100%" h={500}><Calendar /></Flex>`
+  },
+  {
     path: "/button",
     title: "Button",
     from: "Button",
@@ -183,7 +207,7 @@ const pages = [
       const [index, setIndex] = useState(0);
       useInterval(() => {
         setIndex((index + 1) % names.length);
-      }, 1500);
+      }, 2500);
       return (
         <Flex align="center" w="100%" p={30}>
           <Flex align="center" w="100%" py={50}>
@@ -298,12 +322,14 @@ const pages = [
     smallCode: `<Button>Submit</Button>`,
     code: `function form() {
       const formRef = useRef(null);
+      const theme = useTheme();
       return (
         <Fragment>
           <Form
             ref={formRef}
             onSubmit={(doc, reset) => {
-              alert(JSON.stringify(doc));
+              console.log(JSON.stringify(doc));
+              theme.alert({type: "success", message: "Yeah!"})
               //reset()
             }}
             buttonProps={{ mt: 10 }}
@@ -400,7 +426,7 @@ const pages = [
       showHandle={false}
       handleColor="transparent"
     />
-    <Input.Slider showValue formatValue={v => v + "%"}  mt={100} w="80%" steps={20} value={[20, 40]} onChange={value => console.log(value)} />
+    <Input.Slider showValue min={18} formatValue={v => v + "%"}  mt={100} w="80%" steps={20} value={[20, 40]} onChange={value => console.log(value)} />
     <Input.Slider mt={100} height={300} vertical steps={10} value={30} />
   </Flex>;`
   },

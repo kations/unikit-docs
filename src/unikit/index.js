@@ -7,7 +7,11 @@ import Box from "./Box";
 
 export * from "./Elements";
 
-const isWeb = Platform.OS === "web";
+export const isWeb = Platform.OS === "web";
+export const isIOS = Platform.OS === "ios";
+export const isAndroid = Platform.OS === "android";
+export const isNative = Platform.OS === "android" || Platform.OS === "ios";
+
 const Touchable = styled.TouchableOpacity();
 
 export * from "./hooks";
@@ -22,8 +26,7 @@ export {
   tc as color,
   tc as tinycolor,
   setObjValue,
-  getObjValue,
-  isWeb
+  getObjValue
 };
 
 export { default as ThemeProvider } from "./ThemeProvider";
@@ -53,6 +56,7 @@ export { default as Headline } from "./Headline";
 export { default as Dropdown } from "./Dropdown";
 export { default as Collapsible } from "./Collapsible";
 export { default as Picker } from "./Picker";
+export { default as Calendar } from "./Calendar";
 
 //Inputs
 export { default as Input } from "./Input";

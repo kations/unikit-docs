@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import * as PropTypes from "prop-types";
 import tc from "tinycolor2";
-import { useTransition, animated } from "react-spring/native";
 
 import styled from "../styled";
+import { useTransition, animated } from "../Spring/useSpringOld";
 
 const Touchable = styled.TouchableOpacity(({ overflow }) => ({
   position: "relative",

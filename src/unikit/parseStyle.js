@@ -69,6 +69,8 @@ export default function parseStyle({
         if (stylKey && rest[key] !== false) {
           style[stylKey] = value;
           delete style[key];
+        } else if (stylKey) {
+          delete style[key];
         } else {
           style[key] = value;
         }
