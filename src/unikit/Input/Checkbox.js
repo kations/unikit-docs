@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 import styled from "../styled";
-import { useSpring, animated } from "../Spring/useSpringOld";
+import { AnimatedView, useSpring } from "../Spring";
 
 const Checkbox = styled.TouchableOpacity(({ size, borderSize }) => ({
   width: size,
@@ -14,14 +14,12 @@ const Checkbox = styled.TouchableOpacity(({ size, borderSize }) => ({
   borderRadius: size / 2
 }));
 
-const Circle = styled.View(({ size, borderSize }) => ({
+const Circle = styled(AnimatedView)(({ size, borderSize }) => ({
   width: size - borderSize * 4,
   height: size - borderSize * 4,
   backgroundColor: "primary",
   borderRadius: size / 2
 }));
-
-const AnimatedCircle = animated(Circle);
 
 const Comp = ({
   type = "primary",
@@ -34,11 +32,12 @@ const Comp = ({
 }) => {
   const [active, setActive] = useState(value || false);
 
-  const { scale, opacity } = useSpring({
-    to: {
-      opacity: active ? 1 : 0,
-      scale: active ? 1 : 0
-    }
+  const opacity = useSpring({
+    to: active ? 1 : 0
+  });
+
+  const scale = useSpring({
+    to: active ? 1 : 0
   });
 
   useEffect(() => {
@@ -63,7 +62,7 @@ const Comp = ({
       }}
       {...rest}
     >
-      <AnimatedCircle
+      <Circle
         size={size}
         borderSize={borderSize}
         style={{ opacity, transform: [{ scale: scale }] }}

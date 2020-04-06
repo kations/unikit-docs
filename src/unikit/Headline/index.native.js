@@ -1,44 +1,11 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { withThemeProps } from "../styled";
 
-import styled, { withThemeProps } from "../styled";
-import Visible from "../Visible";
 import Text from "../Text";
-import Box from "../Box";
-import { useTransition, animated } from "../Spring/useSpringOld";
-
-const AnimatedView = animated(styled.View({}));
-
-const AnimatedText = ({
-  strings = [],
-  level = 1,
-  animateType,
-  color,
-  ...rest
-}) => {
-  const transitions = useTransition(strings, data => data, {
-    from: { opacity: 0, y: 100, x: 0 },
-    leave: { opacity: 0, y: 100, x: 0 },
-    enter: { opacity: 1, y: 0, x: 0 },
-    update: { opacity: 1, y: 0, x: 0 },
-    unique: false,
-    trail: 400 / strings.length
-  });
-  return transitions.map(({ item, props: { opacity, x, y }, key }, index) => (
-    <AnimatedView
-      key={`${key}-${index}`}
-      style={{
-        opacity: opacity,
-        transform: [{ translateY: y || 0 }, { translateX: x || 0 }]
-      }}
-    >
-      <Text level={level} color={color}>
-        {item}
-        {animateType === "word" ? " " : null}
-      </Text>
-    </AnimatedView>
-  ));
-};
+import Flex from "../Flex";
+import Animate from "../Animate";
+import Visible from "../Visible";
 
 const Headline = withThemeProps(
   ({
@@ -60,17 +27,11 @@ const Headline = withThemeProps(
     if (animate) {
       var splittedString = children.split(animateType === "word" ? " " : "");
       return (
-        <Text
-          as={Box}
-          style={{ ...style, ...{ flexDirection: "row" } }}
-          level={level}
-          color={color}
-          {...rest}
-        >
+        <Flex row {...rest}>
           {onVisible ? (
             <Visible
               disabled={visible && stayVisible}
-              onChange={isVisible => {
+              onChange={(isVisible) => {
                 setVisible(isVisible);
               }}
               offset={100}
@@ -80,14 +41,18 @@ const Headline = withThemeProps(
               }}
             </Visible>
           ) : null}
-
-          <AnimatedText
-            strings={(onVisible && visible) || !onVisible ? splittedString : []}
-            animateType={animateType}
-            color={color}
-            {...rest}
-          />
-        </Text>
+          {splittedString.map((string, index) => (
+            <Animate
+              isVisible={!onVisible || (onVisible && visible)}
+              key={`char-${index}`}
+              delay={index * 50}
+            >
+              <Text level={level} style={style} color={color} {...rest}>
+                {`${string}${animateType === "word" ? " " : ""}`}
+              </Text>
+            </Animate>
+          ))}
+        </Flex>
       );
     }
 
@@ -105,14 +70,14 @@ Headline.propTypes = {
   children: PropTypes.node,
   style: PropTypes.object,
   animate: PropTypes.bool,
-  animateType: PropTypes.oneOf(["char", "word"])
+  animateType: PropTypes.oneOf(["char", "word"]),
 };
 
 Headline.defaultPropTypes = {
   level: 1,
   animateType: "char",
   stayVisible: true,
-  delay: 100
+  delay: 100,
 };
 
 export default Headline;

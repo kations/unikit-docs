@@ -7,6 +7,8 @@ import styled, { useTheme, withThemeProps } from "../styled";
 import Hoverable from "../Hoverable";
 import Ripple from "../Ripple";
 import Progress from "../Progress";
+import Text from "../Text";
+
 import { isDark } from "../util";
 
 const getBackground = ({
@@ -61,9 +63,8 @@ const Touchable = styled.View({
   }
 });
 
-const Label = styled.Text(({ textColor, size }) => ({
+const Label = styled(Text)(({ textColor, size }) => ({
   fontSize: size / 3,
-  color: textColor,
   textAlign: "center"
 }));
 
@@ -151,7 +152,7 @@ const Button = withThemeProps(
             {renderLeft}
             {typeof children === "string" ? (
               <Label
-                textColor={
+                color={
                   loading === true || progress < 100 ? "transparent" : textColor
                 }
                 outlined={outlined ? 1 : 0}

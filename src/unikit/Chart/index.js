@@ -1,15 +1,15 @@
-import React, { Fragment, useRef, useEffect } from "react";
+import React, { Fragment, useRef, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import PropTypes from "prop-types";
 
 import styled, { useTheme } from "../styled";
 import Box from "../Box";
-import { useTransition, animated } from "../Spring/useSpringOld";
+import { AnimatedView, useSpring, AnimatedTouchable } from "../Spring";
 
 const ChartWrap = styled(Box)({
   width: "100%",
   flexDirection: "row",
-  overflow: "hidden"
+  overflow: "hidden",
 });
 
 const Chart = styled.ScrollView(({ showValue }) => ({
@@ -17,20 +17,18 @@ const Chart = styled.ScrollView(({ showValue }) => ({
   flex: 1,
   height: "auto",
   width: "100%",
-  paddingTop: showValue ? 20 : 0
+  paddingTop: showValue ? 20 : 0,
 }));
 
-const Bar = animated(
-  styled(Box)({
-    alignItems: "center",
-    position: "relative"
-  })
-);
+const Bar = styled(AnimatedView)({
+  alignItems: "center",
+  position: "relative",
+});
 
 const XAxis = styled.View({
   width: "100%",
   flexDirection: "row",
-  paddingVertical: 10
+  paddingVertical: 10,
 });
 
 const YAxis = styled.View(({ height, gridWidth, gridColor, showValue }) => ({
@@ -41,21 +39,21 @@ const YAxis = styled.View(({ height, gridWidth, gridColor, showValue }) => ({
   alignItems: "flex-end",
   borderRightWidth: gridWidth,
   borderColor: gridColor,
-  marginTop: showValue ? 10 : 0
+  marginTop: showValue ? 10 : 0,
 }));
 
 const Label = styled.View({
   alignItems: "center",
   justifyContent: "center",
-  height: 20
+  height: 20,
 });
 
 const Spacer = styled.View(({ gap }) => ({
-  width: gap * 2
+  width: gap * 2,
 }));
 
 const LabelText = styled.Text({
-  fontSize: 10
+  fontSize: 10,
 });
 
 const BarValue = styled.View(({ theme }) => ({
@@ -64,18 +62,18 @@ const BarValue = styled.View(({ theme }) => ({
   width: "300%",
   top: -20,
   alignItems: "center",
-  justifyContent: "center"
+  justifyContent: "center",
 }));
 
 const BarValueWrap = styled.View(({ theme }) => ({
   width: "100%",
-  overflow: "visible"
+  overflow: "visible",
 }));
 
 const BarValueText = styled.Text({
   width: "100%",
   font: "label",
-  textAlign: "center"
+  textAlign: "center",
 });
 
 function invlerp(a, b, v) {
@@ -85,6 +83,35 @@ function invlerp(a, b, v) {
 function lerp(start, end, t) {
   return start * (1 - t) + end * t;
 }
+
+const AnimatedBar = ({
+  barHeight,
+  index,
+  children,
+  style,
+  delay = 75,
+  ...rest
+}) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setMounted(true);
+    }, index * delay);
+  }, []);
+
+  const height = useSpring({
+    from: 0,
+    to: mounted ? barHeight : 0,
+    delay: index * 500,
+  });
+
+  return (
+    <Bar {...rest} style={{ ...style, height: height }}>
+      {children}
+    </Bar>
+  );
+};
 
 const BarsRenderer = ({
   data,
@@ -101,61 +128,57 @@ const BarsRenderer = ({
   barValueStyle,
   onPress,
   minBarWidth,
-  maxBarWidth
+  maxBarWidth,
+  delay,
 }) => {
-  const transitions = useTransition(bars, data => data.index, {
-    from: { height: 0, opacity: 0 },
-    leave: { height: 0, opacity: 0 },
-    enter: item => ({ height: item.height, opacity: 1 }),
-    update: item => ({ height: item.height }),
-    unique: true,
-    trail: 4000 / data.length
+  return bars.map((item, index) => {
+    return (
+      <AnimatedBar
+        barHeight={item.height}
+        delay={delay}
+        bg={
+          item.color
+            ? item.color
+            : selected !== undefined && selected === item.index
+            ? selectedBarColor
+            : barColor
+        }
+        as={onPress ? AnimatedTouchable : undefined}
+        onPress={onPress ? () => onPress(item) : undefined}
+        activeOpacity={0.8}
+        key={`bar-${index}`}
+        index={item.index}
+        {...barProps}
+        style={{
+          display: "flex",
+          flexGrow: 1,
+          minWidth: minBarWidth,
+          maxWidth: maxBarWidth || "100%",
+          marginHorizontal: gap / 2,
+          // marginBottom:
+          //   item.height < 0 ? min * factor + item.height : min * factor,
+          ...(barProps ? barProps.style || {} : {}),
+        }}
+      >
+        {showValue ? (
+          <BarValue
+            style={{
+              ...barValueStyle,
+            }}
+          >
+            <BarValueWrap>
+              <BarValueText numberOfLines={1}>
+                {formatValue ? formatValue(item.value) : item.value}
+              </BarValueText>
+            </BarValueWrap>
+          </BarValue>
+        ) : null}
+      </AnimatedBar>
+    );
   });
-  return transitions.map(({ item, props: { height }, key }, index) => (
-    <Bar
-      bg={
-        item.color
-          ? item.color
-          : selected !== undefined && selected === item.index
-          ? selectedBarColor
-          : barColor
-      }
-      as={onPress ? TouchableOpacity : undefined}
-      onPress={onPress ? () => onPress(item) : undefined}
-      activeOpacity={0.8}
-      key={key}
-      {...barProps}
-      style={{
-        display: "flex",
-        flexGrow: 1,
-        minWidth: minBarWidth,
-        maxWidth: maxBarWidth || "100%",
-        marginHorizontal: gap / 2,
-        height: height.interpolate(h => Math.abs(h)),
-        marginBottom: height.interpolate(h =>
-          h < 0 ? min * factor + h : min * factor
-        ),
-        ...barProps.style
-      }}
-    >
-      {showValue ? (
-        <BarValue
-          style={{
-            ...barValueStyle
-          }}
-        >
-          <BarValueWrap>
-            <BarValueText numberOfLines={1}>
-              {formatValue ? formatValue(item.value) : item.value}
-            </BarValueText>
-          </BarValueWrap>
-        </BarValue>
-      ) : null}
-    </Bar>
-  ));
 };
 
-const Comp = props => {
+const Comp = (props) => {
   const {
     barProps,
     style,
@@ -185,6 +208,7 @@ const Comp = props => {
     scrollable = false,
     tickCount = 5,
     scrollToEnd = false,
+    delay,
     ...rest
   } = props;
 
@@ -207,11 +231,11 @@ const Comp = props => {
       ? maxValue
       : Math.max.apply(
           null,
-          data.map(a => a.value)
+          data.map((a) => a.value)
         );
     var min = Math.min.apply(
       null,
-      data.map(a => a.value)
+      data.map((a) => a.value)
     );
   }
 
@@ -225,7 +249,7 @@ const Comp = props => {
 
   const factor = height / (max + min === 0 ? 1 : max + min);
 
-  const getHeight = number => {
+  const getHeight = (number) => {
     const height = number * factor;
     return height;
   };
@@ -265,17 +289,17 @@ const Comp = props => {
 
   var count = 0;
   const groupBy = (array, key) => {
-    return array.reduce(function(acc, item) {
+    return array.reduce(function (acc, item) {
       const newItem = Object.assign({}, item, {
         index: count,
-        height: getHeight(item.value)
+        height: getHeight(item.value),
       });
-      if (acc.find(a => a.label === item.label)) {
-        acc.find(a => a.label === item.label).bars.push(newItem);
+      if (acc.find((a) => a.label === item.label)) {
+        acc.find((a) => a.label === item.label).bars.push(newItem);
       } else {
         acc.push({
           label: item[key],
-          bars: [newItem]
+          bars: [newItem],
         });
       }
       count++;
@@ -299,7 +323,7 @@ const Comp = props => {
               <LabelText
                 style={{
                   color: theme.colors[labelColor] || labelColor,
-                  ...theme.fonts[labelFont]
+                  ...theme.fonts[labelFont],
                 }}
                 numberOfLines={1}
               >
@@ -316,7 +340,7 @@ const Comp = props => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           flexDirection: "column",
-          minWidth: "100%"
+          minWidth: "100%",
         }}
         showValue={showValue}
         ref={scrollRef}
@@ -329,7 +353,7 @@ const Comp = props => {
             height: height,
             flexDirection: "row",
             alignItems: "flex-end",
-            paddingHorizontal: gap / 2
+            paddingHorizontal: gap / 2,
           }}
         >
           {grid ? (
@@ -352,6 +376,7 @@ const Comp = props => {
                 selectedBarColor={selectedBarColor}
                 gap={gap}
                 min={min}
+                delay={delay}
                 factor={factor}
                 showValue={showValue}
                 formatValue={formatValue}
@@ -371,7 +396,7 @@ const Comp = props => {
             style={{
               paddingHorizontal: gap / 2,
               borderTopWidth: 2,
-              borderColor: axisColor
+              borderColor: axisColor,
             }}
           >
             {groupedData.map((group, index) => (
@@ -381,13 +406,13 @@ const Comp = props => {
                   flex: group.bars.length,
                   minWidth: minBarWidth,
                   maxWidth: maxBarWidth || "100%",
-                  marginHorizontal: gap / 2
+                  marginHorizontal: gap / 2,
                 }}
               >
                 <LabelText
                   style={{
                     color: theme.colors[labelColor] || labelColor,
-                    ...theme.fonts[labelFont]
+                    ...theme.fonts[labelFont],
                   }}
                   numberOfLines={1}
                 >
@@ -406,17 +431,17 @@ Comp.propTypes = {
   value: PropTypes.bool,
   style: PropTypes.object,
   borderSize: PropTypes.number,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
 };
 
 Comp.defaultPropTypes = {
   labelProps: {
     style: {
-      color: "text"
-    }
+      color: "text",
+    },
   },
   barLabelStyle: {},
-  barProps: { style: {} }
+  barProps: { style: {} },
 };
 
 export default Comp;

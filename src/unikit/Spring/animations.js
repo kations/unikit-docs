@@ -21,7 +21,7 @@ const {
   divide,
   modulo,
   proc,
-  min: min2
+  min: min2,
 } = Animated;
 
 export const min = (...args) => args.reduce((acc, arg) => min2(acc, arg));
@@ -37,7 +37,7 @@ export const moving = (
     lessThan(abs(delta), minPositionDelta),
     [
       set(noMovementFrames, add(noMovementFrames, 1)),
-      not(greaterThan(noMovementFrames, emptyFrameThreshold))
+      not(greaterThan(noMovementFrames, emptyFrameThreshold)),
     ],
     [set(noMovementFrames, 0), 1]
   );
@@ -45,8 +45,8 @@ export const moving = (
 
 export const snapPoint = (value, velocity, points) => {
   const point = add(value, multiply(0.2, velocity));
-  const diffPoint = p => abs(sub(point, p));
-  const deltas = points.map(p => diffPoint(p));
+  const diffPoint = (p) => abs(sub(point, p));
+  const deltas = points.map((p) => diffPoint(p));
   const minDelta = min(...deltas);
   return points.reduce(
     (acc, p) => cond(eq(diffPoint(p), minDelta), p, acc),
@@ -60,12 +60,12 @@ export const bInterpolate = proc((value, origin, destination) =>
 
 export const useValues = (values, deps) =>
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useMemoOne(() => values.map(v => new Value(v)), deps);
+  useMemoOne(() => values.map((v) => new Value(v)), deps);
 
 export const useClocks = (numberOfClocks, deps) =>
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useMemoOne(() => new Array(numberOfClocks).fill(0).map(() => new Clock()), [
-    deps
+    deps,
   ]);
 
 export const useDiff = (node, deps) => {

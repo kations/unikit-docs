@@ -5,7 +5,7 @@ import * as PropTypes from "prop-types";
 import styled, { withThemeProps } from "../styled";
 import Icon from "../Icon";
 import Button from "../Button";
-import { useTransition, animated } from "../Spring/useSpringOld";
+import Animate from "../Animate";
 
 const Container = styled.View(({ from, gap }) => ({
   position: Platform.OS === "web" ? "fixed" : "absolute",
@@ -14,10 +14,35 @@ const Container = styled.View(({ from, gap }) => ({
   top: from === "top" ? 0 : "auto",
   width: "100%",
   zIndex: 9999,
-  paddingHorizontal: gap
+  paddingHorizontal: gap,
 }));
 
-const Message = animated(styled.View());
+const Message = ({ children, timeout, setItems, key, ...rest }) => {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setItems((state) => state.filter((i) => i.key !== key));
+      }, 500);
+    }, timeout);
+  }, []);
+
+  return (
+    <Animate
+      key={key}
+      from={{ y: -100, o: 0 }}
+      to={{ y: 0, o: 1 }}
+      w="auto"
+      isVisible={visible}
+      flexCenter
+      {...rest}
+    >
+      {children}
+    </Animate>
+  );
+};
 
 let id = 0;
 
@@ -35,22 +60,22 @@ const Alert = withThemeProps(
   }) => {
     const [items, setItems] = useState([]);
 
-    const transitions = useTransition(items, items => items.key, {
-      from: { opacity: 0, top: from === "bottom" ? 30 : -30 },
-      enter: { opacity: 1, top: 0 },
-      leave: { opacity: 0, top: from === "bottom" ? 30 : -30 },
-      onRest: item =>
-        setTimeout(() => {
-          setItems(state => state.filter(i => i.key !== item.key));
-        }, item.timeout || timeout)
-    });
+    // const transitions = useTransition(items, (items) => items.key, {
+    //   from: { opacity: 0, top: from === "bottom" ? 30 : -30 },
+    //   enter: { opacity: 1, top: 0 },
+    //   leave: { opacity: 0, top: from === "bottom" ? 30 : -30 },
+    //   onRest: (item) =>
+    //     setTimeout(() => {
+    //       setItems((state) => state.filter((i) => i.key !== item.key));
+    //     }, item.timeout || timeout),
+    // });
 
     useEffect(() => {
       if (alert) {
         if (from === "bottom") {
-          setItems(state => [...state, { key: id++, ...alert }]);
+          setItems((state) => [...state, { key: id++, ...alert }]);
         } else {
-          setItems(state => [{ key: id++, ...alert }, ...state]);
+          setItems((state) => [{ key: id++, ...alert }, ...state]);
         }
         if (onAlert) onAlert(alert);
       }
@@ -65,8 +90,13 @@ const Alert = withThemeProps(
         {...rest}
       >
         {from === "top" ? <SafeAreaView collapsable={false} /> : null}
-        {transitions.map(({ item, props, key }) => (
-          <Message w="auto" key={key} style={props} my={gap / 2} flexCenter>
+        {items.map((item, index) => (
+          <Message
+            my={gap / 2}
+            setItems={setItems}
+            timeout={timeout}
+            key={item.key}
+          >
             <Button
               w="auto"
               maxWidth={maxWidth}
@@ -78,9 +108,11 @@ const Alert = withThemeProps(
                   size={20}
                   ml={gap}
                   bgAware={item.type || "surface"}
-                  onPress={e => {
+                  onPress={(e) => {
                     e.stopPropagation();
-                    setItems(state => state.filter(i => i.key !== item.key));
+                    setItems((state) =>
+                      state.filter((i) => i.key !== item.key)
+                    );
                   }}
                 />
               }
@@ -102,14 +134,14 @@ Alert.propTypes = {
   from: PropTypes.string,
   gap: PropTypes.number,
   maxWidth: PropTypes.number,
-  onAlert: PropTypes.func
+  onAlert: PropTypes.func,
 };
 
 Alert.defaultPropTypes = {
   timeout: 2000,
   from: "top",
   gap: 15,
-  maxWidth: 700
+  maxWidth: 700,
 };
 
 export default Alert;

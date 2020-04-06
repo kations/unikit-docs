@@ -5,7 +5,7 @@ const pages = [
     from: "Box",
     group: "Primitives",
     smallCode: `<Box bg="primary" w={50} h={50} />`,
-    code: `<Box bg="primary" w={50} h={50} />`
+    code: `<Box bg="primary" w={50} h={50} />`,
   },
   {
     path: "/flex",
@@ -16,7 +16,7 @@ const pages = [
       <Box bg="primary" w={50} h={50} />
       <Box bg="primary" opacity={0.5} w={50} h={50} />
     </Flex>`,
-    code: ``
+    code: ``,
   },
   {
     path: "/headline",
@@ -24,7 +24,7 @@ const pages = [
     from: "Headline",
     group: "Primitives",
     smallCode: `<Headline>H1</Headline>`,
-    code: ``
+    code: ``,
   },
   {
     path: "/text",
@@ -32,7 +32,7 @@ const pages = [
     from: "Text",
     group: "Primitives",
     smallCode: `<Text>Text</Text>`,
-    code: ``
+    code: ``,
   },
   {
     path: "/dropdown",
@@ -48,7 +48,7 @@ const pages = [
     }}
     content={<Button onPress={() => alert("onPress")}>Content</Button>}>
     <Button>Dropdown</Button>
-    </Dropdown>`
+    </Dropdown>`,
   },
   {
     path: "/calendar",
@@ -56,7 +56,7 @@ const pages = [
     from: "Calendar",
     group: "UI",
     smallCode: `<Calendar />`,
-    code: `<Flex w="100%" h={500}><Calendar /></Flex>`
+    code: `<Flex w="100%" h={500}><Calendar /></Flex>`,
   },
   {
     path: "/button",
@@ -77,6 +77,9 @@ const pages = [
     <Button m={5} progress={77}>
       Progress
     </Button>
+    <Button m={5} loading>
+      Progress
+    </Button>
     <Button m={5} rounded light>
       Light
     </Button>
@@ -89,7 +92,7 @@ const pages = [
     <Button m={5} rounded light ripple>
       Ripple
     </Button>
-  </Flex>;`
+  </Flex>;`,
   },
   {
     path: "/picker",
@@ -97,7 +100,7 @@ const pages = [
     from: "Picker",
     group: "UI",
     smallCode: `<Flex w="80%"><Picker /></Flex>`,
-    code: `<Flex><Picker onChange={(value) => console.log({value})} /></Flex>`
+    code: `<Flex><Picker onChange={(value) => console.log({value})} /></Flex>`,
   },
   {
     path: "/collapsible",
@@ -106,7 +109,7 @@ const pages = [
     group: "UI",
     smallCode: `<Collapsible w="80%"><Box bg="primary" w={20} h={20} /></Collapsible>`,
     code: `<Flex><Collapsible><Box bg="primary" w={100} h={100} /></Collapsible>
-    <Collapsible mt={5}><Box bg="primary" w={100} h={100} /></Collapsible></Flex>`
+    <Collapsible mt={5}><Box bg="primary" w={100} h={100} /></Collapsible></Flex>`,
   },
   {
     path: "/tabs",
@@ -139,7 +142,7 @@ const pages = [
       borderRadius={0}
     />
   </Flex>;
-  `
+  `,
   },
   //   {
   //     path: "/group",
@@ -194,14 +197,14 @@ const pages = [
       }}
     />
     <Avatar bg="success" darken={0.5} char="IT" />
-  </Flex>;`
+  </Flex>;`,
   },
   {
     path: "/icon",
     title: "Icon",
     from: "Icon",
     group: "UI",
-    smallCode: `<Icon name="zap" size={50} animate />`,
+    smallCode: `<Icon name="zap" size={50} />`,
     code: `function RenderIcon() {
       const names = Object.keys(icons);
       const [index, setIndex] = useState(0);
@@ -225,14 +228,15 @@ const pages = [
           </Grid>
         </Flex>
       );
-    }`
+    }`,
   },
   {
     path: "/chart",
     title: "Chart",
     from: "Chart",
+    group: "UI",
     smallCode: `<Flex w="200" h={80}><Chart data={[10,15,13,17,15,22]} height={80} onPress={bar => alert(bar.index)} /></Flex>`,
-    code: `<Chart data={[10,15,13,17,15,22]} height={150} onPress={bar => alert(bar.index)} />`
+    code: `<Chart data={[10,15,13,17,15,22]} height={150} onPress={bar => alert(bar.index)} />`,
   },
   {
     path: "/grid",
@@ -248,7 +252,7 @@ const pages = [
     <Box bg="primary" w="100%" h={50} />
     <Box bg="primary" w="100%" h={50} />
     <Box bg="primary" w="100%" h={50} />
-  </Grid>;`
+  </Grid>;`,
   },
   {
     path: "/progress",
@@ -274,7 +278,7 @@ const pages = [
       showValue
     />
     <Progress loading />
-  </Flex>`
+  </Flex>`,
   },
   {
     path: "/swiper",
@@ -312,7 +316,7 @@ const pages = [
         <Box bg="#000" bgAlpha={0.25} flex={1} />
       </Swiper>
     </Flex>
-  </Flex>;`
+  </Flex>;`,
   },
   {
     path: "/form",
@@ -395,7 +399,7 @@ const pages = [
           </Button>
         </Fragment>
       );
-    }`
+    }`,
   },
   {
     path: "/textinput",
@@ -403,7 +407,7 @@ const pages = [
     from: "Input",
     group: "Inputs",
     smallCode: `<Input.Text width="80%" bg="input" />`,
-    code: `<Input.Text width="80%" bg="input" />`
+    code: `<Input.Text width="80%" bg="input" />`,
   },
   {
     path: "/slider",
@@ -428,7 +432,7 @@ const pages = [
     />
     <Input.Slider showValue min={18} formatValue={v => v + "%"}  mt={100} w="80%" steps={20} value={[20, 40]} onChange={value => console.log(value)} />
     <Input.Slider mt={100} height={300} vertical steps={10} value={30} />
-  </Flex>;`
+  </Flex>;`,
   },
   {
     path: "/switch",
@@ -436,7 +440,7 @@ const pages = [
     from: "Input",
     group: "Inputs",
     smallCode: `<Input.Switch />`,
-    code: `<Input.Switch />`
+    code: `<Input.Switch />`,
   },
   {
     path: "/color",
@@ -444,7 +448,7 @@ const pages = [
     from: "Input",
     group: "Inputs",
     smallCode: `<Input.Color w="80%"  bg="input" />`,
-    code: `<Form><Input.Color w="80%"  bg="input" field="color" defaultValue="#FFF" /></Form>`
+    code: `<Form><Input.Color w="80%"  bg="input" field="color" defaultValue="#FFF" /></Form>`,
   },
   {
     path: "/checkbox",
@@ -452,7 +456,7 @@ const pages = [
     from: "Input",
     group: "Inputs",
     smallCode: `<Input.Checkbox circleSize={40} />`,
-    code: `<Input.Checkbox circleSize={40} />`
+    code: `<Input.Checkbox circleSize={40} />`,
   },
   {
     path: "/number",
@@ -460,7 +464,7 @@ const pages = [
     from: "Input",
     group: "Inputs",
     smallCode: `<Input.Number w="80%"  bg="input"/>`,
-    code: `<Input.Number w="80%"  bg="input"/>`
+    code: `<Input.Number w="80%"  bg="input"/>`,
   },
   {
     path: "/select",
@@ -468,7 +472,7 @@ const pages = [
     from: "Input",
     group: "Inputs",
     smallCode: `<Input.Select w="80%" options={["unikit", "is awesome"]} bg="input" />`,
-    code: `<Input.Select w="80%" options={["unikit", "is awesome"]} bg="input" />`
+    code: `<Input.Select w="80%" options={["unikit", "is awesome"]} bg="input" />`,
   },
   {
     path: "/datepicker",
@@ -476,8 +480,8 @@ const pages = [
     from: "Input",
     group: "Inputs",
     smallCode: `<Input.DatePicker w="80%" bg="input" />`,
-    code: `<Form><Input type="date" label="Date" w="100%"  bg="input" field="date" /><Input type="time" label="Time"  w="100%" bg="input" field="time" /><Input type="datetime" label="Datetime" w="100%" bg="input" field="datetime" /></Form>`
-  }
+    code: `<Form><Input type="date" label="Date" w="100%"  bg="input" field="date" /><Input type="time" label="Time"  w="100%" bg="input" field="time" /><Input type="datetime" label="Datetime" w="100%" bg="input" field="datetime" /></Form>`,
+  },
 ];
 
 module.exports.pages = pages;

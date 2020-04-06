@@ -12,37 +12,30 @@ import { isDark } from "../util";
 const Icon = styled(Box)(({ size }) => ({
   position: "relative",
   width: size,
-  height: size
+  height: size,
 }));
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
-function getInitialState() {
-  const anim = new Animated.Value(0);
-
-  const path = anim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["M20,20L20,80L80,80L80,20Z", "M40,40L33,60L60,60L65,40Z"]
-  });
-  return { anim, path };
-}
-
 const AnimatedIcon = ({ size, withBg, color, iconProps }) => {
   const animatedValue = useMemo(() => new Animated.Value(0), []);
   const theme = useTheme();
-  const strokeDasharray = new svgPathProperties(iconProps.d).getTotalLength();
+  const strokeDasharray = useMemo(
+    () => new svgPathProperties(iconProps.d).getTotalLength(),
+    [iconProps.d]
+  );
 
   useEffect(() => {
     Animated.timing(animatedValue, {
       toValue: 1,
       duration: 600,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start();
   }, []);
 
   const t = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [strokeDasharray, 0]
+    outputRange: [strokeDasharray, 0],
   });
 
   return (
@@ -53,7 +46,7 @@ const AnimatedIcon = ({ size, withBg, color, iconProps }) => {
           style={{
             stroke: theme.colors[color] || color,
             fill: "transparent",
-            opacity: 0.2
+            opacity: 0.2,
           }}
         />
       ) : null}
@@ -101,8 +94,8 @@ const Comp = withThemeProps(
       fill: "transparent",
       style: {
         fill: fill ? theme.colors[color] || color : "transparent",
-        stroke: theme.colors[color] || color
-      }
+        stroke: theme.colors[color] || color,
+      },
     };
 
     return (
@@ -148,7 +141,7 @@ Comp.propTypes = {
   withBg: t.bool,
   animateOpacity: t.bool,
   springConfig: t.object,
-  onPress: t.func
+  onPress: t.func,
 };
 
 Comp.defaultPropTypes = {
@@ -160,7 +153,7 @@ Comp.defaultPropTypes = {
   color: "primary",
   animate: false,
   withBg: true,
-  springConfig: { config: { duration: 750 } }
+  springConfig: { config: { duration: 750 } },
 };
 
 export default Comp;

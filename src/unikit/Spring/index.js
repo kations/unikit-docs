@@ -2,13 +2,7 @@ import * as React from "react";
 import { Platform, TouchableOpacity, View } from "react-native";
 import Animated from "react-native-reanimated";
 
-import {
-  useTimingTransition,
-  useSpringTransition,
-  withSpringTransition,
-  withTimingTransition,
-  bin
-} from "./transitions";
+import { withSpringTransition, withTimingTransition, bin } from "./transitions";
 import { interpolateColor } from "./colors";
 
 const useMemoOne = React.useMemo;
@@ -35,26 +29,38 @@ const {
   color,
   Extrapolate,
   useCode,
-  createAnimatedComponent
+  createAnimatedComponent,
 } = Animated;
 
-// export const useAnimation = ({ value, config = {} }) => {
-//   const hook = config.duration ? useTimingTransition : useSpringTransition;
-//   var x = hook(value, config);
-//   return x;
-// };
-
 //TODO MOCK API
-export const useSpring = ({ from, to, config = {}, immediate }) => {
+export const useSpring = ({
+  from,
+  to,
+  config = {},
+  immediate,
+  loop,
+  delay = 0,
+}) => {
   const hook = config.duration ? withTimingTransition : withSpringTransition;
   const value = useMemoOne(() => new Value(from !== undefined ? from : to), [
-    from
+    from,
   ]);
   useCode(() => set(value, typeof to === "boolean" ? bin(to) : to), [
     to,
-    value
+    value,
   ]);
-  const transition = useMemoOne(() => hook(value, config, immediate), [value]);
+
+  const transition = useMemoOne(
+    () =>
+      hook({
+        value,
+        customConfig: config,
+        immediate,
+        loop,
+        delay,
+      }),
+    [value]
+  );
   return transition;
 };
 
@@ -65,7 +71,7 @@ export const intColorWeb = (value, { color }) => {
 export const intColorNative = (value, { inputRange, outputRange }) => {
   return interpolateColor(value, {
     inputRange,
-    outputRange
+    outputRange,
   });
 };
 
@@ -86,7 +92,7 @@ export {
   sub,
   color,
   Extrapolate,
-  Value
+  Value,
 };
 
 export * from "./colors";

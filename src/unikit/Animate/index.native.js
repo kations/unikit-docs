@@ -10,6 +10,10 @@ import { useUpdateEffect } from "../hooks";
 
 const Box = styled(Animated.View)();
 
+const getValue = (obj, key, defaultValue) => {
+  return obj[key] !== undefined ? obj[key] : defaultValue;
+};
+
 const Animate = withThemeProps(
   ({
     from = { o: 0, y: 100, x: 0 },
@@ -27,30 +31,29 @@ const Animate = withThemeProps(
     const [visible, setVisible] = useState(false);
 
     const x = useSpring({
-      to: visible ? to.x || 0 : from.x || 0,
-      config
+      to: visible ? getValue(to, "x", 0) : getValue(from, "x", 0),
+      config,
     });
     const y = useSpring({
-      to: visible ? to.y || 0 : from.y || 0,
-      config
+      to: visible ? getValue(to, "y", 0) : getValue(from, "y", 0),
+      config,
+    });
+
+    const s = useSpring({
+      to: visible ? getValue(to, "s", 1) : getValue(from, "s", 1),
+      config,
     });
 
     const opacity = useSpring({
-      to: visible
-        ? to.o !== undefined
-          ? to.o
-          : 1
-        : from.o !== undefined
-        ? from.o
-        : 1,
-      config
+      to: visible ? getValue(to, "o", 0) : getValue(from, "o", 0),
+      config,
     });
 
     useEffect(() => {
       if (isVisible && !onVisible) {
         setTimeout(() => {
           setVisible(true);
-        }, delay || 50);
+        }, delay || 25);
       }
     }, []);
 
@@ -70,7 +73,7 @@ const Animate = withThemeProps(
         style={{
           ...style,
           opacity: opacity,
-          transform: [{ translateY: y }, { translateX: x }]
+          transform: [{ translateY: y }, { translateX: x }, { scale: s }],
         }}
         pointerEvents={visible ? "auto" : "none"}
         {...rest}
@@ -84,7 +87,7 @@ const Animate = withThemeProps(
         <Fragment>
           <Visible
             stayVisible={stayVisible}
-            onChange={isVisible => {
+            onChange={(isVisible) => {
               setVisible(isVisible);
             }}
             offset={100}
@@ -113,14 +116,14 @@ Animate.propTypes = {
   delay: PropTypes.number,
   duration: PropTypes.number,
   config: PropTypes.object,
-  style: PropTypes.object
+  style: PropTypes.object,
 };
 
 Animate.defaultPropTypes = {
   from: { o: 0, y: 100, x: 0 },
   to: { o: 1, y: 0, x: 0 },
   stayVisible: true,
-  isVisible: true
+  isVisible: true,
 };
 
 export default Animate;

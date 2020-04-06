@@ -9,8 +9,7 @@ import {
   AnimatedTouchable,
   AnimatedView,
   intColor,
-  useSpring,
-  Animated
+  useSpring
 } from "../Spring";
 
 const Switch = styled(AnimatedTouchable)(({ size, radius, gap }) => ({

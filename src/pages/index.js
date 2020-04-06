@@ -17,7 +17,7 @@ import {
   Grid,
   isWeb,
   isAndroid,
-  Animate
+  Animate,
 } from "../unikit";
 import { WheelPicker } from "../unikit/Input/DatePicker";
 import { Wrapper, Link } from "../components";
@@ -27,7 +27,7 @@ import { useInterval } from "../unikit/hooks";
 import { Platform } from "react-native";
 
 const getComponentsByGroup = (array, group) => {
-  return array.filter(item => item.group === group);
+  return array.filter((item) => item.group === group);
 };
 
 export default function App() {
@@ -66,11 +66,7 @@ export default function App() {
             <H1 style={{ fontSize: "4rem", fontWeight: "bold" }} animate>
               Universal
             </H1>
-            <H1
-              mt={-5}
-              style={{ fontSize: "4rem", fontWeight: "bold" }}
-              animate
-            >
+            <H1 mt={-5} style={{ fontSize: "4rem", fontWeight: "bold" }}>
               Components
             </H1>
             <Animate delay={50}>
@@ -90,14 +86,14 @@ export default function App() {
           <Flex py={15}>
             <Code bg="primary" bgAlpha={0.1} p={20}>
               <Code color="primary">{`yarn add`}</Code>
-              {` unikit styled-components react-spring swgs`}
+              {` unikit styled-components react-native-svg react-native-reanimated`}
             </Code>
           </Flex>
           <P>For use with react-native you need to install react-native-svg</P>
         </Animate>
       </Wrapper>
       <Wrapper>
-        {groups.map(group => {
+        {groups.map((group) => {
           return (
             <Fragment key={group}>
               <H3 style={{ fontWeight: "bold" }} animate>

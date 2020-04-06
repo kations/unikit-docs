@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dimensions, TouchableOpacity, Platform } from "react-native";
 import PropTypes from "prop-types";
 
 import styled, { withThemeProps, useTheme } from "../styled";
-import { useTransition, animated } from "../Spring/useSpringOld";
+import { useSpring, AnimatedView } from "../Spring";
 
 import Flex from "../Flex";
 import Switch from "./Switch";
@@ -19,7 +19,7 @@ import Tags from "./Tags";
 
 const Label = styled.Text(({ color, size }) => ({
   color: color,
-  font: "label"
+  font: "label",
 }));
 
 const InputWrapper = styled.View(({ theme }) => ({
@@ -28,7 +28,7 @@ const InputWrapper = styled.View(({ theme }) => ({
   alignItems: "flex-start",
   width: "100%",
   height: "auto",
-  borderRadius: theme.globals.roundness
+  borderRadius: theme.globals.roundness,
 }));
 
 const BorderWrap = styled.View(({ theme, size }) => ({
@@ -40,7 +40,7 @@ const BorderWrap = styled.View(({ theme, size }) => ({
   zIndex: 100,
   overflow: "hidden",
   borderRadius: theme.globals.roundness,
-  justifyContent: "flex-end"
+  justifyContent: "flex-end",
 }));
 
 const BorderBlur = styled.View(({ borderBlurColor }) => ({
@@ -50,16 +50,43 @@ const BorderBlur = styled.View(({ borderBlurColor }) => ({
   width: "100%",
   height: 2,
   width: "100%",
-  backgroundColor: borderBlurColor
+  backgroundColor: borderBlurColor,
 }));
 
-const Border = animated(
-  styled.View(({ borderFocusColor }) => ({
-    height: 2,
-    width: "100%",
-    backgroundColor: borderFocusColor
-  }))
-);
+const Border = styled(AnimatedView)(({ borderFocusColor }) => ({
+  height: 2,
+  width: "100%",
+  backgroundColor: borderFocusColor,
+}));
+
+const AnimatedBorder = ({ focused, width, ...rest }) => {
+  const [active, setActive] = useState(0);
+  const x = useSpring({
+    from: 0,
+    to: active * width,
+  });
+
+  useEffect(() => {
+    if (focused && active === 0) {
+      setActive(1);
+    } else if (active === 1 && !focused) {
+      setActive(2);
+      setTimeout(() => {
+        setActive(0);
+      }, 500);
+    }
+  }, [focused]);
+  return (
+    <Border
+      {...rest}
+      style={{
+        left: "-100%",
+        opacity: active === 0 ? 0 : 1,
+        transform: [{ translateX: x }],
+      }}
+    />
+  );
+};
 
 const Surface = styled.View();
 
@@ -116,7 +143,7 @@ const types = {
   number: Number,
   checkbox: CheckboxInput,
   multiselect: MultiSelect,
-  tags: Tags
+  tags: Tags,
 };
 
 const getTypeProps = ({ theme, clean }) => ({
@@ -124,74 +151,74 @@ const getTypeProps = ({ theme, clean }) => ({
     inputWrap: {
       px: clean ? 0 : theme.globals.inputGap,
       py: theme.globals.inputGap,
-      bg: "transparent"
-    }
+      bg: "transparent",
+    },
   },
   switch: {
     inputWrap: {
-      mt: theme.globals.inputGap / 2
+      mt: theme.globals.inputGap / 2,
     },
     wrapperProps: {
       style: {
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between"
-      }
+        justifyContent: "space-between",
+      },
     },
     labelProps: {
-      size: "p"
-    }
+      size: "p",
+    },
   },
   checkbox: {
     inputWrap: {
       px: clean ? 0 : theme.globals.inputGap,
       py: theme.globals.inputGap,
-      bg: "transparent"
+      bg: "transparent",
     },
     labelProps: {
       size: "p",
       style: {
-        marginLeft: 10
-      }
-    }
+        marginLeft: 10,
+      },
+    },
   },
   number: {
     inputWrap: {
-      mt: !clean ? -theme.globals.inputGap / 2 : 0
-    }
+      mt: !clean ? -theme.globals.inputGap / 2 : 0,
+    },
   },
   select: {
     inputWrap: {
-      mt: !clean ? -theme.globals.inputGap / 2 : 0
-    }
+      mt: !clean ? -theme.globals.inputGap / 2 : 0,
+    },
   },
   color: {
     inputWrap: {
-      mt: !clean ? -theme.globals.inputGap / 2 : 0
-    }
+      mt: !clean ? -theme.globals.inputGap / 2 : 0,
+    },
   },
   date: {
     inputWrap: {
-      mt: !clean ? -theme.globals.inputGap / 2 : 0
+      mt: !clean ? -theme.globals.inputGap / 2 : 0,
     },
     wrapperProps: {
-      readOnly: true
-    }
+      readOnly: true,
+    },
   },
   text: {
     inputWrap: {
-      mt: !clean ? -theme.globals.inputGap / 2 : 0
-    }
+      mt: !clean ? -theme.globals.inputGap / 2 : 0,
+    },
   },
   textarea: {
     inputWrap: {
-      mt: !clean ? -theme.globals.inputGap / 2 : 0
+      mt: !clean ? -theme.globals.inputGap / 2 : 0,
     },
     input: {
       numberOfLines: 3,
-      multiline: true
-    }
-  }
+      multiline: true,
+    },
+  },
 });
 
 export function Input({
@@ -225,12 +252,6 @@ export function Input({
 
   const TypeProps = getTypeProps({ theme, clean })[type] || {};
 
-  const transitions = useTransition(focused, null, {
-    from: { left: -width },
-    enter: { left: 0 },
-    leave: { left: width }
-  });
-
   return (
     <InputWrapper
       as={
@@ -242,7 +263,7 @@ export function Input({
         }
       }}
       bg={clean ? "transparent" : "input"}
-      onLayout={event => {
+      onLayout={(event) => {
         const { width } = event.nativeEvent.layout;
         setWidth(width);
       }}
@@ -250,7 +271,7 @@ export function Input({
       shadow={clean ? undefined : shadow}
       style={{
         ...style,
-        ...(TypeProps.wrapperProps ? TypeProps.wrapperProps.style : {})
+        ...(TypeProps.wrapperProps ? TypeProps.wrapperProps.style : {}),
       }}
     >
       {label ? (
@@ -300,7 +321,8 @@ export function Input({
 
       <BorderWrap size={width} pointerEvents="none">
         <BorderBlur borderBlurColor={borderBlurColor} />
-        {transitions.map(({ item, key, props }) =>
+        <AnimatedBorder focused={focused} width={width} bg={borderFocusColor} />
+        {/* {transitions.map(({ item, key, props }) =>
           item ? (
             <Border
               key={key}
@@ -308,11 +330,11 @@ export function Input({
               {...borderProps}
               style={{
                 transform: [{ translateX: props.left }],
-                ...borderProps.style
+                ...borderProps.style,
               }}
             />
           ) : null
-        )}
+        )} */}
       </BorderWrap>
     </InputWrapper>
   );
@@ -333,7 +355,7 @@ InputWithTheme.propTypes = {
     "select",
     "multiselect",
     "switch",
-    "tags"
+    "tags",
   ]),
   value: PropTypes.any,
   label: PropTypes.string,
@@ -342,7 +364,7 @@ InputWithTheme.propTypes = {
   onChange: PropTypes.func,
   required: PropTypes.bool,
   clean: PropTypes.bool,
-  floating: PropTypes.bool
+  floating: PropTypes.bool,
 };
 
 InputWithTheme["Text"] = Text;

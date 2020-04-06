@@ -5,9 +5,9 @@ import styled, { withThemeProps } from "../styled";
 import { useLayout, useUpdateEffect } from "../hooks";
 import Group from "../Group";
 import Button from "../Button";
-import { useSpring, animated } from "../Spring/useSpringOld";
+import { AnimatedView, useSpring } from "../Spring";
 
-const Indicator = animated(styled.View());
+const Indicator = styled(AnimatedView)();
 
 const getIndexByValue = (options, value) => {
   if (value === undefined) return 0;
@@ -26,20 +26,22 @@ const Tabs = withThemeProps(
     tabSize = 50,
     font,
     bg = "background",
+    inactiveColor = "primary",
+    inactiveColorAlpha = 0.6,
     activeColor = "primary",
-    inactiveColor,
     indicatorColor = "primary",
     tabProps = {},
     indicatorSize = 3,
     indicatorProps = {},
+    springConfig = {},
     ...rest
   }) => {
     const [active, setActive] = useState(getIndexByValue(options, value) || 0);
     const { onLayout, width, height } = useLayout();
     const size = vertical ? height : width;
-    const { x } = useSpring({
-      x: Math.round(active * (size / options.length)),
-      config: { mass: 1, tension: 300, friction: 30, duration: 300 }
+    const x = useSpring({
+      to: Math.round(active * (size / options.length)),
+      config: springConfig //{ mass: 1, tension: 300, friction: 30, duration: 300 }
     });
 
     useUpdateEffect(() => {
@@ -66,8 +68,8 @@ const Tabs = withThemeProps(
           const isActive = index === active;
           return (
             <Button
-              bg={bg}
-              color={isActive ? activeColor : inactiveColor || undefined}
+              bg={"transparent"}
+              color={isActive ? activeColor : inactiveColor}
               key={index}
               size={tabSize}
               onPress={() => {
@@ -76,7 +78,12 @@ const Tabs = withThemeProps(
                   onChange(item.value !== undefined ? item.value : item);
               }}
               {...tabProps}
-              labelProps={{ ...tabProps.labelProps, ...(font ? { font } : {}) }}
+              labelProps={{
+                ...tabProps.labelProps,
+                ...(font ? { font } : {}),
+                bgAware: bg,
+                colorAlpha: isActive ? undefined : inactiveColorAlpha
+              }}
               zIndex={100}
             >
               {item.label || item}
