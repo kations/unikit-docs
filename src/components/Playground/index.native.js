@@ -13,7 +13,8 @@ import {
   Button,
   Tabs,
   useInterval,
-  useTheme
+  useTheme,
+  Icon,
 } from "../../unikit";
 import icons from "../../unikit/Icon/icons";
 
@@ -60,7 +61,8 @@ export default function Table({ code, scope, ...rest }) {
         useState,
         useRef,
         icons,
-        ...scope
+        Icon,
+        ...scope,
       }}
     >
       <WrappedEditor {...rest} />

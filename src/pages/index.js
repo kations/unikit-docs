@@ -113,6 +113,7 @@ export default function App() {
                             height={150}
                             align="center"
                             justify="center"
+                            overflow="hidden"
                           >
                             <Playground
                               code={smallCode}

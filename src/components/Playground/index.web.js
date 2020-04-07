@@ -19,7 +19,8 @@ import {
   Tabs,
   useInterval,
   isWeb,
-  useTheme
+  useTheme,
+  Icon,
 } from "../../unikit";
 import icons from "../../unikit/Icon/icons";
 
@@ -43,17 +44,17 @@ const LiveNative = ({ live: { error, code, element, onChange }, clean }) => {
         <Flex bg="#1C182C" p={10}>
           <Editor
             value={string}
-            onValueChange={text => {
+            onValueChange={(text) => {
               setString(text);
               onChange(text);
             }}
-            highlight={code => highlight(code, languages.js)}
+            highlight={(code) => highlight(code, languages.js)}
             padding={10}
             style={{
               background: "#1C182C",
               fontFamily: '"Fira code", "Fira Mono", monospace',
               color: "#E2DCF2",
-              fontSize: "1rem"
+              fontSize: "1rem",
             }}
           />
         </Flex>
@@ -85,7 +86,8 @@ export default function Table({ code, scope, ...rest }) {
         useState,
         useRef,
         icons,
-        ...scope
+        Icon,
+        ...scope,
       }}
     >
       <WrappedEditor {...rest} />

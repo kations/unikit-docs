@@ -55,7 +55,7 @@ const pages = [
     title: "Calendar",
     from: "Calendar",
     group: "UI",
-    smallCode: `<Calendar />`,
+    smallCode: `<Button><Icon name="calendar" size={25} color="#FFF" /></Button>`,
     code: `<Flex w="100%" h={500}><Calendar /></Flex>`,
   },
   {
