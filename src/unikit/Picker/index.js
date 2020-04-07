@@ -4,7 +4,7 @@ import {
   Platform,
   ScrollView,
   TouchableOpacity,
-  Picker as PickerIOS
+  Picker as PickerIOS,
 } from "react-native";
 import PropTypes from "prop-types";
 
@@ -14,20 +14,20 @@ import { useDebounce, useUpdateEffect } from "../hooks";
 const VIEWABILITY_CONFIG = {
   minimumViewTime: 3000,
   viewAreaCoveragePercentThreshold: 100,
-  waitForInteraction: true
+  waitForInteraction: true,
 };
 
 const Wrap = styled.View();
 const Item = styled.TouchableOpacity();
 const Label = styled.Text({
   font: "p",
-  color: "text"
+  color: "text",
 });
 
 const getIndexByValue = (options, value) => {
   if (value === undefined) return 0;
   const findIndex = options.findIndex(
-    option => option === value || option.value === value
+    (option) => option === value || option.value === value
   );
   return findIndex;
 };
@@ -50,7 +50,7 @@ const Picker = withThemeProps(
   }) => {
     const theme = useTheme();
 
-    const getLabel = item => {
+    const getLabel = (item) => {
       let label = item.label ? item.label : item;
       if (format) {
         label = format(item);
@@ -67,7 +67,7 @@ const Picker = withThemeProps(
               height: itemHeight * 3,
               width: "100%",
               paddingHorizontal: gap,
-              borderTopColor: theme.colors.text
+              borderTopColor: theme.colors.text,
             }}
             onValueChange={(itemValue, itemIndex) => {
               if (onChange) onChange(itemValue, itemIndex);
@@ -75,7 +75,7 @@ const Picker = withThemeProps(
             itemStyle={{
               textAlign,
               ...theme.fonts.p,
-              color: theme.colors.text
+              color: theme.colors.text,
             }}
           >
             {placeholder ? (
@@ -107,18 +107,18 @@ const Picker = withThemeProps(
           scrollRef.current.scrollTo({
             x: 0,
             y: index * itemHeight,
-            animated: true
+            animated: true,
           });
         } else {
           scrollRef.current.scrollToIndex({
             animated: true,
-            index: index
+            index: index,
           });
         }
       }
     };
 
-    const onScroll = e => {
+    const onScroll = (e) => {
       if (mounted) {
         const { y } = e.nativeEvent.contentOffset;
         let index = y / itemHeight;
@@ -135,7 +135,7 @@ const Picker = withThemeProps(
             width: "100%",
             height: itemHeight,
             justifyContent: "center",
-            paddingHorizontal: gap
+            paddingHorizontal: gap,
           }}
           onPress={() => {
             scrollTo({ index });
@@ -177,7 +177,7 @@ const Picker = withThemeProps(
       const newValue = options[index] !== undefined ? options[index] : null;
       if (index > options.length - 1) index = options.length - 1;
       if (newValue !== value) {
-        onChange(newValue, index);
+        if (onChange) onChange(newValue, index);
       }
     };
 
@@ -196,7 +196,7 @@ const Picker = withThemeProps(
       decelerationRate: "fast",
       showsVerticalScrollIndicator: false,
       onScroll: onScroll,
-      onMomentumScrollEnd: onScrollEnd
+      onMomentumScrollEnd: onScrollEnd,
       //onScrollEndDrag: onScrollEnd
     };
 
@@ -236,11 +236,11 @@ const Picker = withThemeProps(
                 ? undefined
                 : getIndexByValue(options, value)
             }
-            keyExtractor={item => `item-${item.value ? item.value : item}`}
+            keyExtractor={(item) => `item-${item.value ? item.value : item}`}
             getItemLayout={(data, index) => ({
               length: itemHeight,
               offset: itemHeight * index,
-              index
+              index,
             })}
             ListHeaderComponent={<Item w="100%" h={itemHeight}></Item>}
             ListFooterComponent={<Item w="100%" h={itemHeight}></Item>}

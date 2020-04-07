@@ -1,3 +1,4 @@
+import "setimmediate";
 import * as React from "react";
 import { Platform, TouchableOpacity, View } from "react-native";
 import Animated from "react-native-reanimated";

@@ -2,7 +2,7 @@ import React from "react";
 import parsePropTypes from "parse-prop-types";
 import { Flex, Text } from "../unikit";
 
-const getDefaultValue = value => {
+const getDefaultValue = (value) => {
   if (typeof value === "object") {
     return JSON.stringify(value);
   }
@@ -24,7 +24,7 @@ export default function Table({ component, ...rest }) {
           <Text>Default</Text>
         </Flex>
       </Flex>
-      {Object.keys(types).map(key => {
+      {Object.keys(types).map((key) => {
         const { type, required } = types[key];
 
         const defaultValue =
@@ -32,7 +32,7 @@ export default function Table({ component, ...rest }) {
             ? component.defaultPropTypes[key]
             : "";
         return (
-          <Flex bg="primary" bgAlpha={0.1} p={20} mt={3} w="100%" row>
+          <Flex bg="primary" bgAlpha={0.1} p={20} mt={3} w="100%" key={key} row>
             <Flex flex={1}>
               <Text color="primary">{key}</Text>
             </Flex>

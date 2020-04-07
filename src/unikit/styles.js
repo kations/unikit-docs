@@ -6,11 +6,11 @@ export const uniStyles = {
   //bool
   absoluteFill: {
     styl: { position: "absolute", left: 0, right: 0, top: 0, bottom: 0 },
-    type: PropTypes.bool
+    type: PropTypes.bool,
   },
   flexCenter: {
     styl: { alignItems: "center", justifyContent: "center" },
-    type: PropTypes.bool
+    type: PropTypes.bool,
   },
   absolute: { stylKey: "position", type: PropTypes.bool },
   fixed: { stylKey: "position", type: PropTypes.bool },
@@ -43,20 +43,24 @@ export const uniStyles = {
   row: { stylKey: "flexDirection", type: PropTypes.bool },
   bw: { stylKey: "borderWidth" },
   bc: { stylKey: "borderColor", color: true },
-  br: { stylKey: "borderRadius" }
+  br: { stylKey: "borderRadius" },
+};
+
+export const textStyles = {
+  fontSize: { type: defaultProp },
+  color: { color: true, type: PropTypes.string },
+  fontFamily: { type: PropTypes.string },
+  textAlign: { type: PropTypes.string },
+  lineHeight: { type: defaultProp },
+  fontWeight: { type: defaultProp },
+  letterSpacing: { type: defaultProp },
 };
 
 export const styles = {
   ...uniStyles,
+  ...textStyles,
   //defaults
   width: {},
-  fontSize: { type: defaultProp },
-  color: { color: true },
-  fontFamily: {},
-  textAlign: {},
-  lineHeight: { type: defaultProp },
-  fontWeight: { type: defaultProp },
-  letterSpacing: { type: defaultProp },
   display: {},
   maxWidth: {},
   minWidth: {},
@@ -118,5 +122,5 @@ export const styles = {
   top: {},
   right: {},
   bottom: {},
-  left: {}
+  left: {},
 };
