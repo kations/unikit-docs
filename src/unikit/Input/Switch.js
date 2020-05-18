@@ -9,7 +9,7 @@ import {
   AnimatedTouchable,
   AnimatedView,
   intColor,
-  useSpring
+  useSpring,
 } from "../Spring";
 
 const Switch = styled(AnimatedTouchable)(({ size, radius, gap }) => ({
@@ -23,21 +23,21 @@ const Switch = styled(AnimatedTouchable)(({ size, radius, gap }) => ({
   web: {
     cursor: "pointer",
     transitionProperty: "all",
-    transitionDuration: "250ms"
-  }
+    transitionDuration: "250ms",
+  },
 }));
 
 const Track = styled.View({
   position: "relative",
   width: "100%",
-  height: "100%"
+  height: "100%",
 });
 
 const Touchable = styled.TouchableOpacity({
   absoluteFill: true,
   web: {
-    cursor: "grab"
-  }
+    cursor: "grab",
+  },
 });
 
 const Circle = styled(AnimatedView)(({ size, radius, gap }) => ({
@@ -48,8 +48,8 @@ const Circle = styled(AnimatedView)(({ size, radius, gap }) => ({
   borderRadius: radius ? radius - gap / 2 : size,
   backgroundColor: "#fff",
   web: {
-    cursor: "grab"
-  }
+    cursor: "grab",
+  },
 }));
 
 const Comp = ({
@@ -61,6 +61,7 @@ const Comp = ({
   style,
   trackColor = "background",
   activeTrackColor = "primary",
+  disabled,
   ...rest
 }) => {
   const theme = useTheme();
@@ -72,23 +73,25 @@ const Comp = ({
 
   const [down, setDown] = useState(false);
   const [active, setActive] = useState(value || false);
-  const [move, setMove] = useState(active ? LEFT : 0);
+  const [move, setMove] = useState(active ? LEFT : 0.0001);
 
   const x = useSpring({
     to: move,
-    immediate: down
+    immediate: down,
   });
 
   useUpdateEffect(() => {
-    setMove(active ? LEFT : 0);
-    if (onChange) onChange(active);
+    setMove(active ? LEFT : 0.0001);
   }, [active]);
 
   useUpdateEffect(() => {
     if (down === false) {
-      const active = move > LEFT / 2;
-      setMove(active ? LEFT : 0);
-      setActive(active);
+      const newActive = disabled ? active : move > LEFT / 2;
+      setMove(newActive ? LEFT : 0.0001);
+      setActive(newActive);
+      setTimeout(() => {
+        if (onChange) onChange(newActive);
+      }, 10);
     }
   }, [down]);
 
@@ -114,7 +117,7 @@ const Comp = ({
       },
       onPanResponderRelease: (e, { vx, vy }) => {
         setDown(false);
-      }
+      },
     },
     [move, down]
   );
@@ -130,12 +133,21 @@ const Comp = ({
   const backgroundColor = intColor(x, {
     color: active ? ACTIVE_COLOR : COLOR,
     inputRange: [0, LEFT],
-    outputRange: [COLOR, ACTIVE_COLOR]
+    outputRange: [COLOR, ACTIVE_COLOR],
   });
 
   useEffect(() => {
-    setActive(value);
+    if (value !== active) setActive(value);
   }, [value]);
+
+  const onPressSwitch = (newActive) => {
+    if (disabled) return false;
+    setActive(newActive);
+    setTimeout(() => {
+      if (onChange) onChange(newActive);
+    }, 10);
+    if (theme.onFeedback) theme.onFeedback("success");
+  };
 
   // TODO: add hover effect
   // onMouseEnter={() => console.log("hover")}
@@ -146,21 +158,21 @@ const Comp = ({
       style={{
         ...style,
         width: TRACK_WIDTH,
-        backgroundColor: backgroundColor
+        backgroundColor: backgroundColor,
       }}
       activeOpacity={0.8}
       size={size}
       radius={radius}
       gap={gap}
       onPress={() => {
-        setActive(!active);
+        onPressSwitch(!active);
       }}
       {...rest}
     >
       <Track>
         <Circle
           style={{
-            transform: [{ translateX: x }]
+            transform: [{ translateX: x }],
           }}
           size={size}
           radius={radius}
@@ -170,7 +182,7 @@ const Comp = ({
         >
           <Touchable
             onPress={() => {
-              setActive(!active);
+              onPressSwitch(!active);
             }}
           />
         </Circle>
@@ -184,7 +196,7 @@ Comp.propTypes = {
   style: PropTypes.object,
   circleSize: PropTypes.number,
   borderSize: PropTypes.number,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
 };
 
 export default Comp;

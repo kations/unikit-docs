@@ -6,6 +6,7 @@ import styled, { withThemeProps, useTheme } from "../styled";
 import { useSpring, AnimatedView } from "../Spring";
 
 import Flex from "../Flex";
+import Group from "../Group";
 import Switch from "./Switch";
 import Text from "./Text";
 import DatePicker from "./DatePicker";
@@ -16,6 +17,8 @@ import Number from "./Number";
 import Checkbox from "./Checkbox";
 import MultiSelect from "./MultiSelect";
 import Tags from "./Tags";
+import Tabs from "./Tabs";
+//import MultiSwitch from "./MultiSwitch";
 
 const Label = styled.Text(({ color, size }) => ({
   color: color,
@@ -90,10 +93,31 @@ const AnimatedBorder = ({ focused, width, ...rest }) => {
 
 const Surface = styled.View();
 
-const SwitchInput = ({ label, bg, clean, labelColor, size = 35, ...rest }) => {
+const SwitchInput = ({
+  label,
+  bg,
+  clean,
+  labelColor,
+  size = 35,
+  onChange,
+  value,
+  disabled,
+  ...rest
+}) => {
   const theme = useTheme();
   return (
     <Flex
+      as={TouchableOpacity}
+      onPress={
+        !disabled
+          ? () => {
+              if (onChange) {
+                onChange(!value);
+              }
+            }
+          : undefined
+      }
+      activeOpacity={0.8}
       p={theme.globals.inputGap * 0.6}
       pl={theme.globals.inputGap}
       br={theme.globals.roundness}
@@ -102,16 +126,64 @@ const SwitchInput = ({ label, bg, clean, labelColor, size = 35, ...rest }) => {
       content="space-between"
       align="center"
       bg={bg}
+      opacity={disabled ? 0.5 : 1}
+      {...rest}
     >
       <Label font="p" color={labelColor}>
         {label}
       </Label>
-      <Switch size={size} {...rest} />
+      <Switch
+        size={size}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+      />
     </Flex>
   );
 };
 
-const CheckboxInput = ({ label, bg, clean, labelColor, ...rest }) => {
+const getVale = (options, value) => {
+  const obj = {};
+  options.map((option) => {
+    obj[option.value || option] = false;
+  });
+  return { ...obj, ...value };
+};
+
+const MultiSwitch = ({
+  onChange,
+  value,
+  options,
+  disabled,
+  label,
+  ...rest
+}) => {
+  const [obj, setObj] = useState(() => getVale(options, value));
+
+  useEffect(() => {
+    console.log({ obj });
+    onChange(obj);
+  }, [obj]);
+  return (
+    <Group vertical>
+      {options.map((option, index) => {
+        var key = option.value ? option.value : option;
+        return (
+          <SwitchInput
+            label={option.label ? option.label : option}
+            key={`switch-${index}`}
+            value={obj[key]}
+            onChange={(v) => setObj({ ...obj, [key]: v })}
+            disabled={disabled}
+            {...rest}
+          />
+        );
+      })}
+    </Group>
+  );
+};
+
+const CheckboxInput = ({ label, bg, clean, labelColor, onChange, ...rest }) => {
   const theme = useTheme();
   return (
     <Flex
@@ -122,7 +194,7 @@ const CheckboxInput = ({ label, bg, clean, labelColor, ...rest }) => {
       align="center"
       bg={bg}
     >
-      <Checkbox {...rest} />
+      <Checkbox onChange={onChange} {...rest} />
       <Label font="p" ml={theme.globals.inputGap * 0.5} color={labelColor}>
         {label}
       </Label>
@@ -143,7 +215,9 @@ const types = {
   number: Number,
   checkbox: CheckboxInput,
   multiselect: MultiSelect,
+  multiswitch: MultiSwitch,
   tags: Tags,
+  tabs: Tabs,
 };
 
 const getTypeProps = ({ theme, clean }) => ({
@@ -156,7 +230,7 @@ const getTypeProps = ({ theme, clean }) => ({
   },
   switch: {
     inputWrap: {
-      mt: theme.globals.inputGap / 2,
+      mt: clean ? theme.globals.inputGap / 2 : 0,
     },
     wrapperProps: {
       style: {
@@ -248,20 +322,12 @@ export function Input({
   const [focused, setFocus] = useState(false);
   const [width, setWidth] = useState(Dimensions.get("window").width);
 
-  const InputComp = types[type] || undefined;
+  const InputComp = types[type] || null;
 
   const TypeProps = getTypeProps({ theme, clean })[type] || {};
 
   return (
     <InputWrapper
-      as={
-        ["switch", "checkbox"].indexOf(type) > -1 ? TouchableOpacity : undefined
-      }
-      onPress={() => {
-        if (onChange) {
-          onChange(!value);
-        }
-      }}
       bg={clean ? "transparent" : "input"}
       onLayout={(event) => {
         const { width } = event.nativeEvent.layout;

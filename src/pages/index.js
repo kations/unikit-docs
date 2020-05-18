@@ -31,31 +31,20 @@ const getComponentsByGroup = (array, group) => {
 };
 
 export default function App() {
-  const [vis, setVis] = useState(true);
+  const [vis, setVis] = useState(500);
   const groups = ["UI", "Inputs", "Primitives"];
 
   //if (Platform.OS === "ios") return null;
 
   // useInterval(() => {
-  //   setVis(!vis);
+  //   setVis(vis / 2);
   // }, 3000);
 
   // return (
-  //   <Page>
-  //     <Animate bg="primary" w={100} h={54} />
-  //     <H1 animate>Das ist ein Test</H1>
-
-  //     <Form onSubmit={doc => alert(JSON.stringify(doc))}>
-  //       <Input
-  //         label="Color"
-  //         w="100%"
-  //         bg="input"
-  //         field="colosdfdsr"
-  //         type="switch"
-  //       />
-  //       <Input label="Color" w="100%" bg="input" field="colosr" type="color" />
-  //     </Form>
-  //   </Page>
+  //   <Fragment>
+  //     <Animate bg="primary" w={100} h={100} />
+  //     <Input.Switch />
+  //   </Fragment>
   // );
 
   return (
@@ -63,10 +52,10 @@ export default function App() {
       {isWeb ? (
         <Flex py={150}>
           <Wrapper align="center">
-            <H1 style={{ fontSize: "4rem", fontWeight: "bold" }} animate>
+            <H1 style={{ fontSize: "4rem" }} bold>
               Universal
             </H1>
-            <H1 mt={-5} style={{ fontSize: "4rem", fontWeight: "bold" }}>
+            <H1 mt={-5} style={{ fontSize: "4rem" }} bold animate>
               Components
             </H1>
             <Animate delay={50}>
@@ -79,9 +68,7 @@ export default function App() {
         </Flex>
       ) : null}
       <Wrapper mb={100}>
-        <H3 style={{ fontWeight: "bold" }} animate>
-          Getting started
-        </H3>
+        <H3 style={{ fontWeight: "bold" }}>Getting started</H3>
         <Animate delay={250}>
           <Flex py={15}>
             <Code bg="primary" bgAlpha={0.1} p={20}>
@@ -96,16 +83,14 @@ export default function App() {
         {groups.map((group) => {
           return (
             <Fragment key={group}>
-              <H3 style={{ fontWeight: "bold" }} animate>
-                {group}
-              </H3>
+              <H3 bold>{group}</H3>
               <Grid mt={10} mb={75} min={200} gap={20}>
                 {getComponentsByGroup(pages, group)
                   .sort((a, b) => a.title > b.title)
                   .map(({ title, path, smallCode }) => {
                     return (
                       <Link to={path}>
-                        <Animate>
+                        <Animate delay={500}>
                           <Flex
                             bg="primary"
                             bgAlpha={0.1}

@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import styled, { useTheme } from "../styled";
 import Box from "../Box";
+import Text from "../Text";
 import { AnimatedView, useSpring, AnimatedTouchable } from "../Spring";
 
 const ChartWrap = styled(Box)({
@@ -60,7 +61,6 @@ const BarValue = styled.View(({ theme }) => ({
   position: "absolute",
   left: "-100%",
   width: "300%",
-  top: -20,
   alignItems: "center",
   justifyContent: "center",
 }));
@@ -70,19 +70,13 @@ const BarValueWrap = styled.View(({ theme }) => ({
   overflow: "visible",
 }));
 
-const BarValueText = styled.Text({
+const BarValueText = styled(Text)({
   width: "100%",
   font: "label",
   textAlign: "center",
 });
 
-function invlerp(a, b, v) {
-  return (v - a) / (b - a);
-}
-
-function lerp(start, end, t) {
-  return start * (1 - t) + end * t;
-}
+const ProgressBar = styled.View();
 
 const AnimatedBar = ({
   barHeight,
@@ -130,19 +124,30 @@ const BarsRenderer = ({
   minBarWidth,
   maxBarWidth,
   delay,
+  rotateValue,
+  valueOffset,
+  valueProps,
+  progressColor,
+  bottomGap,
 }) => {
   return bars.map((item, index) => {
+    const bg =
+      item.color && selected === undefined
+        ? item.color
+        : selected
+        ? item.color || selectedBarColor
+        : barColor;
+
+    const valueStyle = rotateValue
+      ? { top: valueOffset || 10, transform: [{ rotate: `-90deg` }] }
+      : {
+          top: valueOffset || -10,
+        };
     return (
       <AnimatedBar
-        barHeight={item.height}
+        barHeight={Math.abs(item.height)}
         delay={delay}
-        bg={
-          item.color
-            ? item.color
-            : selected !== undefined && selected === item.index
-            ? selectedBarColor
-            : barColor
-        }
+        bg={bg}
         as={onPress ? AnimatedTouchable : undefined}
         onPress={onPress ? () => onPress(item) : undefined}
         activeOpacity={0.8}
@@ -155,6 +160,8 @@ const BarsRenderer = ({
           minWidth: minBarWidth,
           maxWidth: maxBarWidth || "100%",
           marginHorizontal: gap / 2,
+          marginBottom:
+            item.value >= 0 ? bottomGap : bottomGap - Math.abs(item.height),
           // marginBottom:
           //   item.height < 0 ? min * factor + item.height : min * factor,
           ...(barProps ? barProps.style || {} : {}),
@@ -163,15 +170,29 @@ const BarsRenderer = ({
         {showValue ? (
           <BarValue
             style={{
+              zIndex: 10,
               ...barValueStyle,
+              ...valueStyle,
             }}
           >
             <BarValueWrap>
-              <BarValueText numberOfLines={1}>
-                {formatValue ? formatValue(item.value) : item.value}
+              <BarValueText bgAware={bg} numberOfLines={1} {...valueProps}>
+                {formatValue ? formatValue(item.value, item) : item.value}
               </BarValueText>
             </BarValueWrap>
           </BarValue>
+        ) : null}
+        {item.progress ? (
+          <ProgressBar
+            bg={progressColor}
+            w="100%"
+            h={`${item.progress * 100}%`}
+            absolute
+            l={0}
+            b={-1}
+            zIndex={0}
+            pointerEvents="none"
+          />
         ) : null}
       </AnimatedBar>
     );
@@ -191,10 +212,12 @@ const Comp = (props) => {
     maxBarWidth,
     gap = 10,
     barColor = "primary",
+    progressColor = "primary",
     selected,
     selectedBarColor = "primary",
     grid = true,
     xAxis = false,
+    xAxisProps = {},
     yAxis = false,
     axisColor = "rgba(0,0,0,0.1)",
     barValueStyle = {},
@@ -204,10 +227,14 @@ const Comp = (props) => {
     labelFont = "label",
     gridWidth = 2,
     gridColor = "primary",
+    gridOpacity = 0.5,
     labelColor = "text",
     scrollable = false,
     tickCount = 5,
     scrollToEnd = false,
+    rotateValue = true,
+    valueOffset,
+    valueProps = {},
     delay,
     ...rest
   } = props;
@@ -350,10 +377,12 @@ const Comp = (props) => {
           style={{
             position: "relative",
             minWidth: "100%",
-            height: height,
+            height: height + 30,
             flexDirection: "row",
             alignItems: "flex-end",
             paddingHorizontal: gap / 2,
+            overflow: "hidden",
+            borderRadius: 7,
           }}
         >
           {grid ? (
@@ -361,18 +390,20 @@ const Comp = (props) => {
               position="absolute"
               left={0}
               bottom={min * factor - 1}
-              width="100%"
+              width="110%"
               height={gridWidth}
-              backgroundColor={gridColor}
+              bg={gridColor}
+              bgAlpha={gridOpacity}
             />
           ) : null}
           {groupedData.map((group, index) => (
             <Fragment key={index}>
-              {group.bars.length > 1 ? <Spacer gap={gap} /> : null}
+              {group.bars.length > 1 ? <Spacer gap={gap / 2} /> : null}
               <BarsRenderer
+                bottomGap={min * factor - 1}
                 data={data}
                 bars={group.bars}
-                selected={selected}
+                selected={selected && selected === index}
                 selectedBarColor={selectedBarColor}
                 gap={gap}
                 min={min}
@@ -386,8 +417,12 @@ const Comp = (props) => {
                 minBarWidth={minBarWidth}
                 maxBarWidth={maxBarWidth}
                 onPress={onPress}
+                rotateValue={rotateValue}
+                valueOffset={valueOffset}
+                valueProps={valueProps}
+                progressColor={progressColor}
               />
-              {group.bars.length > 1 ? <Spacer gap={gap} /> : null}
+              {group.bars.length > 1 ? <Spacer gap={gap / 2} /> : null}
             </Fragment>
           ))}
         </Box>
@@ -395,9 +430,8 @@ const Comp = (props) => {
           <XAxis
             style={{
               paddingHorizontal: gap / 2,
-              borderTopWidth: 2,
-              borderColor: axisColor,
             }}
+            {...xAxisProps}
           >
             {groupedData.map((group, index) => (
               <Label

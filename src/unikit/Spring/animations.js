@@ -1,7 +1,6 @@
 import * as React from "react";
 import Animated from "react-native-reanimated";
-//import { useMemoOne } from "use-memo-one";
-const useMemoOne = React.useMemo;
+import { useMemoOne } from "use-memo-one";
 
 const {
   Clock,

@@ -42,10 +42,9 @@ export const useSpring = ({
   loop,
   delay = 0,
 }) => {
+  const start = useMemoOne(() => (from !== undefined ? from : to), []);
   const hook = config.duration ? withTimingTransition : withSpringTransition;
-  const value = useMemoOne(() => new Value(from !== undefined ? from : to), [
-    from,
-  ]);
+  const value = useMemoOne(() => new Value(0), []);
   useCode(() => set(value, typeof to === "boolean" ? bin(to) : to), [
     to,
     value,
@@ -55,6 +54,7 @@ export const useSpring = ({
     () =>
       hook({
         value,
+        start,
         customConfig: config,
         immediate,
         loop,

@@ -7,13 +7,10 @@ import { useLayout } from "../hooks";
 const GridWrap = styled.View({
   position: "relative",
   flexDirection: "row",
-  flexWrap: "wrap"
+  flexWrap: "wrap",
 });
 
-const GridItem = styled.View(({ rowWidth }) => ({
-  width: `${rowWidth}%`,
-  flexBasis: `${rowWidth}%`
-}));
+const GridItem = styled.View();
 
 const Grid = withThemeProps(
   ({
@@ -26,30 +23,32 @@ const Grid = withThemeProps(
     ...rest
   }) => {
     const { onLayout, width } = useLayout();
-    const [colWidth, setColWidth] = useState(100);
-    useEffect(() => {
+    const gridProps = {
+      onLayout,
+      ml: outerGap ? 0 : -gap / 2,
+      mr: outerGap ? 0 : -gap / 2,
+      p: outerGap ? gap / 2 : 0,
+    };
+
+    const getMax = () => {
       const childs = React.Children.count(children);
       let columns = Math.floor(width / min);
       if (columns < 1) columns = 1;
       if (max && columns > max) columns = max;
       if (columns > childs) columns = childs;
       const colWidth = 100 / columns;
-      setColWidth(colWidth);
-    }, [width]);
-
-    const gridProps = {
-      onLayout,
-      ml: outerGap ? 0 : -gap / 2,
-      mr: outerGap ? 0 : -gap / 2,
-      p: outerGap ? gap / 2 : 0
+      return colWidth && colWidth > 0 ? `${colWidth}%` : "100%";
     };
+
     const itemProps = {
       p: gap / 2,
-      rowWidth: colWidth
+      flex: 1,
+      minWidth: min,
+      maxWidth: getMax(),
     };
 
     return (
-      <GridWrap w="auto" {...gridProps} {...rest}>
+      <GridWrap wrap {...gridProps} {...rest}>
         {React.Children.toArray(children).map((child, i) => {
           if (child) {
             return (
@@ -71,14 +70,14 @@ Grid.propTypes = {
   max: PropTypes.number,
   gap: PropTypes.number,
   outerGap: PropTypes.bool,
-  itemStyle: PropTypes.object
+  itemStyle: PropTypes.object,
 };
 
 Grid.defaultPropTypes = {
   min: 250,
   gap: 5,
   outerGap: false,
-  itemStyle: {}
+  itemStyle: {},
 };
 
 export default Grid;

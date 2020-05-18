@@ -21,6 +21,14 @@ const ScrollX = styled.ScrollView();
 const HeadScroller = styled.ScrollView({});
 const TimeStep = styled.TouchableOpacity();
 const Group = styled.TouchableOpacity();
+const Now = styled.View({
+  position: "absolute",
+  left: 0,
+  width: "100%",
+  height: 1,
+  backgroundColor: "error",
+  zIndex: 2000,
+});
 
 const generateTimes = ({ startTime, endTime, timeSteps }) => {
   const times = [];
@@ -56,12 +64,13 @@ const getEventsWithPosition = ({
   colWidth,
   stepHeight,
   timeSteps,
-  startTime
+  startTime,
+  allDay = false,
+  topGap,
 }) => {
   colWidth = colWidth - 20;
   let maxRows = 1;
   return events.reduce((eventsAcc, event, i) => {
-    let numberOfDuplicate = 1;
     const startHours = dayjs(event.date).hour() - startTime;
     const startMinutes = dayjs(event.date).minute();
 
@@ -75,14 +84,14 @@ const getEventsWithPosition = ({
       stepHeight;
     const width = colWidth;
     const style = {
-      top: top + 10,
+      top: top + topGap,
       left: 0,
       height,
-      width
+      width,
     };
 
     const sameRow = eventsAcc.filter(
-      e => e.style.top + e.style.height > style.top
+      (e) => e.style.top + e.style.height > style.top
     );
     const thisRow = sameRow.length + 1;
     if (thisRow > maxRows) {
@@ -118,20 +127,15 @@ const getEventsWithPosition = ({
         }
       }
     }
-
-    // console.log({
-    //   title: event.title,
-    //   itemPosition,
-    //   blockedWidth,
-    //   blockedPositions,
-    //   sameRow
-    // });
-
+    if (allDay) {
+      style.top = 2.5;
+      style.height = topGap - 5;
+    }
     eventsAcc.push({
       ...event,
       thisRow,
       position: itemPosition,
-      style
+      style,
     });
     return eventsAcc;
   }, []);
@@ -139,6 +143,7 @@ const getEventsWithPosition = ({
 
 export function Swiper(
   {
+    theme,
     date = new Date(),
     onChangeDate,
     mode = "week",
@@ -146,89 +151,40 @@ export function Swiper(
     colWidth = 300,
     timeWidth = 55,
     borderOpacity = 0.08,
-    topGap = 10,
+    topGap = 55,
     timeSteps = 0.5,
     startTime = 6,
     endTime = 20,
-    onSlotPress = d => alert(d),
-    onItemPress = item => alert(item.title),
+    onSlotPress = (d) => alert(d),
+    onItemPress = (item) => alert(item.title),
     items = [
       {
         title: "TestEvent 1",
         desc: "Desc",
-        date: dayjs()
-          .subtract(2, "hours")
-          .toDate(),
+        date: dayjs().subtract(1, "hours").toDate(),
         color: "primary",
         duration: 60,
-        groupId: "2"
+        groupId: "2",
+        allDay: true,
       },
       {
         title: "TestEvent 2",
         desc: "Desc",
-        date: dayjs()
-          .subtract(0.5, "hours")
-          .toDate(),
+        date: dayjs().subtract(1, "hours").toDate(),
         color: "primary",
         duration: 60,
-        groupId: "2"
+        groupId: "2",
+        allDay: true,
       },
       {
-        title: "TestEvent 3",
+        title: "TestEvent 1",
         desc: "Desc",
-        date: dayjs()
-          .subtract(0.5, "hours")
-          .toDate(),
+        date: dayjs().subtract(1, "hours").toDate(),
         color: "primary",
         duration: 60,
-        groupId: "2"
+        groupId: "2",
+        allDay: false,
       },
-      {
-        title: "TestEvent 4",
-        desc: "Desc",
-        date: dayjs().toDate(),
-        color: "primary",
-        duration: 60,
-        groupId: "2"
-      },
-      {
-        title: "TestEvent 5",
-        desc: "Desc",
-        date: dayjs().toDate(),
-        color: "primary",
-        duration: 60,
-        groupId: "2"
-      },
-      {
-        title: "TestEvent 6",
-        desc: "Desc",
-        date: dayjs()
-          .add(0.5, "hour")
-          .toDate(),
-        color: "primary",
-        duration: 120,
-        groupId: "2"
-      },
-      {
-        title: "TestEvent 7",
-        desc: "Desc",
-        date: dayjs()
-          .add(1, "hour")
-          .toDate(),
-        color: "primary",
-        duration: 60,
-        groupId: "2"
-      },
-      {
-        title: "TestEvent 8",
-        desc: "Desc",
-        date: dayjs()
-          .add(1, "hour")
-          .toDate(),
-        color: "primary",
-        duration: 60,
-        groupId: "2"
-      }
     ],
     filter = [],
     onChangeFilter,
@@ -236,8 +192,8 @@ export function Swiper(
       {
         name: "Tommy",
         image:
-          "https://images.unsplash.com/photo-1506252374453-ef5237291d83?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60"
-      }
+          "https://images.unsplash.com/photo-1506252374453-ef5237291d83?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60",
+      },
     ],
     buttonProps = { rounded: true },
     ...rest
@@ -254,7 +210,20 @@ export function Swiper(
 
   const times = generateTimes({ startTime, endTime, timeSteps });
   const week = generateWeek({ currentDay, mode, groups });
-  const activeGroups = groups.filter(g => filter.indexOf(g.id) > -1 || !filter);
+  const activeGroups = groups.filter(
+    (g) => filter.indexOf(g.id) > -1 || !filter
+  );
+
+  const getNowTop = () => {
+    const startHours = dayjs().hour() - startTime;
+    const startMinutes = dayjs().minute();
+    const totalStartMinutes = startHours * 60 + startMinutes;
+    const top = (totalStartMinutes / (60 * timeSteps)) * 40;
+
+    return top;
+  };
+
+  console.log({ getNowTop: getNowTop() });
 
   return (
     <Wrapper
@@ -291,12 +260,23 @@ export function Swiper(
                     top: 0,
                     left: 0,
                     opacity: 0,
-                    zIndex: 100
+                    zIndex: 100,
                   }}
                   activeOpacity={0}
                   type="date"
                   value={currentDay}
-                  onChange={date => setDay(dayjs(date).startOf("week"))}
+                  onChange={(date) => setDay(dayjs(date).startOf("week"))}
+                  renderBottom={(setShow) => (
+                    <Button
+                      mb={6}
+                      onPress={() => {
+                        setDay(dayjs(date).startOf("week"));
+                        setShow(false);
+                      }}
+                    >
+                      {theme.translations.showToday}
+                    </Button>
+                  )}
                 />
               </Fragment>
             </Button>
@@ -304,11 +284,7 @@ export function Swiper(
           <Flex flexCenter absoluteFill pointerEvents="box-none" row>
             <Button
               onPress={() =>
-                setDay(
-                  dayjs(currentDay)
-                    .subtract(1, mode)
-                    .toDate()
-                )
+                setDay(dayjs(currentDay).subtract(1, mode).toDate())
               }
               bg="surface"
               size={38}
@@ -327,13 +303,7 @@ export function Swiper(
                 : ``}
             </Text>
             <Button
-              onPress={() =>
-                setDay(
-                  dayjs(currentDay)
-                    .add(1, mode)
-                    .toDate()
-                )
-              }
+              onPress={() => setDay(dayjs(currentDay).add(1, mode).toDate())}
               bg="surface"
               size={38}
               px={9}
@@ -347,7 +317,7 @@ export function Swiper(
               wrapperProps={{
                 w: 325,
                 r: -5,
-                t: "120%"
+                t: "120%",
               }}
               content={
                 <Flex w="100%">
@@ -363,7 +333,9 @@ export function Swiper(
                         onPress={() => {
                           let newFilter = [...filter];
                           if (filter.indexOf(group.id) > -1) {
-                            newFilter = newFilter.filter(id => id !== group.id);
+                            newFilter = newFilter.filter(
+                              (id) => id !== group.id
+                            );
                           } else {
                             newFilter.push(group.id);
                           }
@@ -474,12 +446,12 @@ export function Swiper(
             automaticallyAdjustContentInsets={false}
             showsHorizontalScrollIndicator={true}
             scrollEventThrottle={8}
-            onScroll={e => {
+            onScroll={(e) => {
               if (headRef && headRef.current) {
                 const { contentOffset = {} } = e.nativeEvent;
                 headRef.current.scrollTo({
                   x: contentOffset.x || 0,
-                  animated: false
+                  animated: false,
                 });
               }
             }}
@@ -487,18 +459,43 @@ export function Swiper(
             {week.map((day, index) => {
               const events = getEventsWithPosition({
                 events: items.filter(
-                  e =>
+                  (e) =>
                     (dayjs(e.date).isSame(day, "day") &&
-                      filter.indexOf(e.groupId) > -1) ||
-                    (filter.length === 0 && dayjs(e.date).isSame(day, "day"))
+                      filter.indexOf(e.groupId) > -1 &&
+                      !e.allDay) ||
+                    (filter.length === 0 &&
+                      dayjs(e.date).isSame(day, "day") &&
+                      !e.allDay)
                 ),
                 colWidth,
                 stepHeight,
                 timeSteps,
                 startTime,
                 endTime,
-                times
+                times,
+                topGap,
               });
+
+              const allDay = getEventsWithPosition({
+                events: items.filter(
+                  (e) =>
+                    (dayjs(e.date).isSame(day, "day") &&
+                      filter.indexOf(e.groupId) > -1 &&
+                      e.allDay === true) ||
+                    (filter.length === 0 &&
+                      dayjs(e.date).isSame(day, "day") &&
+                      e.allDay === true)
+                ),
+                colWidth,
+                stepHeight,
+                timeSteps,
+                startTime,
+                endTime,
+                times,
+                allDay: true,
+                topGap,
+              });
+              console.log({ events, allDay });
               return (
                 <Flex
                   w={colWidth}
@@ -507,7 +504,10 @@ export function Swiper(
                   borderRightWidth={index !== week.length - 1 ? 1 : 0}
                   key={`day-${index}-${dayjs(day).format("DD")}`}
                   pt={topGap}
+                  relative
                 >
+                  <Now t={getNowTop()} pointerEvents="none" />
+
                   {times.map((time, i) => {
                     return (
                       <TimeStep
@@ -530,12 +530,24 @@ export function Swiper(
                       />
                     );
                   })}
+                  {allDay.map((event, i) => {
+                    const w = colWidth / allDay.length - 10;
+                    return (
+                      <Event
+                        allDay
+                        event={event}
+                        key={`all-day-event-${i}-${dayjs(day).format("DD")}`}
+                        onPress={(event) => onItemPress(event)}
+                        style={{ ...event.style, width: w, left: i * w }}
+                      />
+                    );
+                  })}
                   {events.map((event, i) => {
                     return (
                       <Event
                         event={event}
                         key={`event-${i}-${dayjs(day).format("DD")}`}
-                        onPress={event => onItemPress(event)}
+                        onPress={(event) => onItemPress(event)}
                         style={event.style}
                       />
                     );
@@ -561,7 +573,7 @@ Swiper.propTypes = {
   gesture: PropTypes.bool,
   dots: PropTypes.bool,
   dotsProps: PropTypes.object,
-  itemProps: PropTypes.object
+  itemProps: PropTypes.object,
 };
 
 export default withThemeProps(forwardRef(Swiper), "Swiper");

@@ -6,7 +6,9 @@ const set = require("set-value");
 
 export function rem(value) {
   if (Platform.OS === "web") return `${value}rem`;
-  return PixelRatio.getFontScale() * 16 * value;
+  const { width } = Dimensions.get("window");
+  const scale = width < 768 ? 0.8 : 1;
+  return PixelRatio.getFontScale() * 16 * value * scale;
 }
 
 export function em(value) {
@@ -22,8 +24,8 @@ export const getObjValue = (obj, path) => {
   return get(obj, path);
 };
 
-export const isDark = colorString => {
-  return tc(colorString).isValid() && tc(colorString).getBrightness() < 175;
+export const isDark = (colorString) => {
+  return tc(colorString).isValid() && tc(colorString).getBrightness() < 195;
 };
 
 export const canUseDOM = !!(

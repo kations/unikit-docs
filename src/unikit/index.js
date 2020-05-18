@@ -1,11 +1,8 @@
 import React, { forwardRef } from "react";
 import tc from "tinycolor2";
-import { Platform } from "react-native";
-import { isDark, setObjValue, getObjValue } from "./util";
+import { Platform, View } from "react-native";
 import styled, { useTheme, withTheme } from "./styled";
 import Box from "./Box";
-
-export * from "./Elements";
 
 export const isWeb = Platform.OS === "web";
 export const isIOS = Platform.OS === "ios";
@@ -15,18 +12,18 @@ export const isNative = Platform.OS === "android" || Platform.OS === "ios";
 const Touchable = styled.TouchableOpacity();
 
 export * from "./hooks";
+export * from "./Spring";
+export * from "./util";
+export * from "./Elements";
 
 export {
   Touchable,
   Box,
-  isDark,
   styled,
   useTheme,
   withTheme,
   tc as color,
   tc as tinycolor,
-  setObjValue,
-  getObjValue
 };
 
 export { default as ThemeProvider } from "./ThemeProvider";
@@ -57,7 +54,7 @@ export { default as Dropdown } from "./Dropdown";
 export { default as Collapsible } from "./Collapsible";
 export { default as Picker } from "./Picker";
 export { default as Calendar } from "./Calendar";
-
+export { default as LinearProgress } from "./LinearProgress";
 //Inputs
 export { default as Input } from "./Input";
 export { default as Form } from "./Form";

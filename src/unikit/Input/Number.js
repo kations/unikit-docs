@@ -19,7 +19,7 @@ const Comp = ({ style, onChange, value, step = 1, ...rest }) => {
     (value && !isNaN(value) ? value : "").toString()
   );
 
-  const changeValue = type => {
+  const changeValue = (type) => {
     if (onChange) {
       const def = type === "add" ? 1 : 0;
       step = type === "add" ? -step : step;
@@ -46,7 +46,7 @@ const Comp = ({ style, onChange, value, step = 1, ...rest }) => {
         keyboardType="decimal-pad"
         autoCapitalize="words"
         value={stringValue}
-        onChange={text => {
+        onChange={(text) => {
           var number;
           text = text.replace(",", ".");
           if (!isNaN(text) && text.toString().indexOf(".") !== -1) {
@@ -73,7 +73,7 @@ const Comp = ({ style, onChange, value, step = 1, ...rest }) => {
               changeValue("remove");
             }}
           >
-            <Icon size={22} name="minus" />
+            <Icon size={20} name="minus" />
           </Button>
           <Button
             light
@@ -83,7 +83,7 @@ const Comp = ({ style, onChange, value, step = 1, ...rest }) => {
               changeValue("add");
             }}
           >
-            <Icon size={22} name="plus" />
+            <Icon size={20} name="plus" />
           </Button>
         </Group>
       </Box>

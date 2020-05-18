@@ -7,7 +7,7 @@ import Icon from "../Icon";
 import Flex from "../Flex";
 import Text from "../Text";
 
-const Event = ({ event, onPress, style }) => {
+const Event = ({ event, onPress, style, allDay }) => {
   return (
     <Flex p={1} absolute overflow="hidden" pointerEvents="auto" style={style}>
       <Flex
@@ -22,12 +22,14 @@ const Event = ({ event, onPress, style }) => {
         borderLeftWidth={2}
       >
         <Text font="caption" mt={3}>
-          {`${dayjs(event.date).format("HH:mm")}-${dayjs(event.date)
-            .add(event.duration, "minutes")
-            .format("HH:mm")}`}
+          {allDay
+            ? "All Day"
+            : `${dayjs(event.date).format("HH:mm")}-${dayjs(event.date)
+                .add(event.duration, "minutes")
+                .format("HH:mm")}`}
         </Text>
         <Text color={event.color}>{event.title}</Text>
-        {event.desc ? (
+        {event.desc && !allDay ? (
           <Text font="label" mt={3}>
             {event.desc}
           </Text>
@@ -42,7 +44,7 @@ const Event = ({ event, onPress, style }) => {
               position: "absolute",
               top: 0,
               right: 0,
-              borderBottomLeftRadius: 5
+              borderBottomLeftRadius: 5,
             }}
           >
             <Icon name="check" color="#FFF" size={17} />
@@ -58,13 +60,13 @@ const eventPropTypes = PropTypes.shape({
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   description: PropTypes.string,
   startDate: PropTypes.instanceOf(Date).isRequired,
-  endDate: PropTypes.instanceOf(Date).isRequired
+  endDate: PropTypes.instanceOf(Date).isRequired,
 });
 
 Event.propTypes = {
   event: eventPropTypes.isRequired,
   onPress: PropTypes.func,
-  style: PropTypes.object
+  style: PropTypes.object,
 };
 
 export default Event;

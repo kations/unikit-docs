@@ -18,8 +18,8 @@ const Value = styled.View();
 const Handle = styled.View();
 const HandleWrap = styled(AnimatedView)({
   web: {
-    cursor: "grab"
-  }
+    cursor: "grab",
+  },
 });
 
 const getTicks = ({ min, max, ticks, size, handleSize }) => {
@@ -45,24 +45,25 @@ const HandleComp = ({
   valueGap = 5,
   showHandle = true,
   handleSize = 30,
-  handleFactor = 2,
+  handleFactor,
   handleFocusOpacity = 0.2,
   handleColor = "#FFF",
   min = 0,
   max = 100,
   steps = 1,
   showValue = false,
+  panValue,
   formatValue,
   vertical = false,
   minDistance = 5,
   handleProps = {},
-  springConfig = {}
+  springConfig = {},
 }) => {
   const [handleDown, setHandleDown] = useState(false);
   const dist = useSpring({
     to: progress * size,
     immediate: down,
-    config: springConfig
+    config: springConfig,
   });
 
   useUpdateEffect(() => {
@@ -75,35 +76,36 @@ const HandleComp = ({
     }
   }, [handleDown]);
 
-  const bindGesture = useGesture(
-    {
-      onMoveShouldSetPanResponderCapture: (e, { dy, dx }) => {
-        const allow = Math.abs(vertical ? dy : dx) > minDistance;
-        return allow;
-      },
-      onPanResponderTerminationRequest: () => false,
-      onPanResponderGrant: (e, { dy, dx }) => {
-        setDown(true);
-        setHandleDown(true);
-      },
-      onPanResponderMove: (e, { dy, dx }) => {
-        const dist = vertical ? dy : dx;
-        const currentPosition = progress * size + dist;
-        let newProgress = getProgress(0, size, currentPosition);
-        if (newProgress < 0) {
-          newProgress = 0;
-        } else if (newProgress > 1) {
-          newProgress = 1;
-        }
-
-        setProgress(newProgress);
-      },
-      onPanResponderRelease: (e, { vx, vy }) => {
-        setHandleDown(false);
-      }
+  const gestureConfig = {
+    onMoveShouldSetPanResponderCapture: (e, { dy, dx }) => {
+      const allow = Math.abs(vertical ? dy : dx) > minDistance;
+      return allow;
     },
-    [size, down]
-  );
+    onPanResponderTerminationRequest: () => false,
+    onPanResponderGrant: (e, { dy, dx }) => {
+      setDown(true);
+      setHandleDown(true);
+    },
+    onPanResponderMove: (e, { dy, dx }) => {
+      const dist = vertical ? dy : dx;
+      console.log({ dist });
+      const currentPosition = progress * size + dist;
+      let newProgress = getProgress(0, size, currentPosition);
+      if (newProgress < 0) {
+        newProgress = 0;
+      } else if (newProgress > 1) {
+        newProgress = 1;
+      }
+
+      setProgress(newProgress);
+    },
+    onPanResponderRelease: (e, { vx, vy }) => {
+      setHandleDown(false);
+    },
+  };
+
+  const bindGesture = useGesture(gestureConfig, [size, down]);
+  const bindGestureValue = useGesture(gestureConfig, [size, down]);
 
   const leftAlign = -(
     (handleSize * handleFactor - (vertical ? handleSize : 0)) /
@@ -125,7 +127,7 @@ const HandleComp = ({
       h={handleSize * handleFactor}
       borderRadius={(handleSize * handleFactor) / 2}
       style={{
-        transform: vertical ? [{ translateY: dist }] : [{ translateX: dist }]
+        transform: vertical ? [{ translateY: dist }] : [{ translateX: dist }],
       }}
       {...bindGesture}
       flexCenter
@@ -145,10 +147,10 @@ const HandleComp = ({
         {showValue === true || (showValue === "onDown" && down) ? (
           <Value
             b={handleSize + valueGap}
-            pointerEvents="none"
+            pointerEvents={panValue ? "auto" : "none"}
             flexCenter
-            absolute
             minWidth={100}
+            {...(panValue ? bindGestureValue : {})}
           >
             <Button bg={progressColor} size={valueSize} rounded>
               {formatValue
@@ -166,7 +168,7 @@ const HandleComp = ({
 
 const getProgressByValue = ({ value, min, max }) => {
   const valueArray = [];
-  value.map(v => {
+  value.map((v) => {
     valueArray.push(getProgress(min, max, v));
   });
   return valueArray;
@@ -174,13 +176,13 @@ const getProgressByValue = ({ value, min, max }) => {
 
 const getValuesByProgress = ({ progress, min, max }) => {
   const valueArray = [];
-  progress.map(p => {
+  progress.map((p) => {
     valueArray.push(getValueByProgress(min, max, p));
   });
   return valueArray.length > 1 ? valueArray : valueArray[0];
 };
 
-const Slider = withThemeProps(props => {
+const Slider = withThemeProps((props) => {
   const {
     onChange,
     onSwipe,
@@ -198,6 +200,7 @@ const Slider = withThemeProps(props => {
     max = 100,
     steps = 1,
     showValue = false,
+    panValue = false,
     formatValue,
     showTicks = true,
     ticks,
@@ -225,13 +228,13 @@ const Slider = withThemeProps(props => {
         : progress[0] * size,
 
     immediate: down,
-    config: springConfig
+    config: springConfig,
   });
 
   const left = useSpring({
     to: value.length > 1 ? progress[0] * size : 0,
     immediate: down,
-    config: springConfig
+    config: springConfig,
   });
 
   useUpdateEffect(() => {
@@ -288,7 +291,7 @@ const Slider = withThemeProps(props => {
                 height: !vertical ? "100%" : dist,
                 transform: vertical
                   ? [{ translateY: left }]
-                  : [{ translateX: left }]
+                  : [{ translateX: left }],
               }}
             />
           )}
@@ -298,6 +301,9 @@ const Slider = withThemeProps(props => {
             <HandleComp
               key={`handle-${i}`}
               progress={progress[i]}
+              panValue={panValue}
+              handleFactor={handleFactor}
+              handleFocusOpacity={handleFocusOpacity}
               setProgress={(value, down) => {
                 let newProgress = [...progress];
                 let newValue = value;
@@ -313,7 +319,7 @@ const Slider = withThemeProps(props => {
                   let newValue = getValuesByProgress({
                     progress: newProgress,
                     min,
-                    max
+                    max,
                   });
                   setTimeout(() => {
                     onSwipe(newProgress, newValue);
@@ -350,7 +356,7 @@ const Slider = withThemeProps(props => {
               max,
               ticks: ticks ? ticks : steps < 10 ? 10 : steps,
               size,
-              handleSize
+              handleSize,
             }).map((tick, index) => {
               return (
                 <TickWrap
@@ -390,13 +396,14 @@ Slider.propTypes = {
   showValue: PropTypes.oneOf([PropTypes.bool, "onDown"]),
   formatValue: PropTypes.func,
   showTicks: PropTypes.bool,
+  panValue: PropTypes.bool,
   ticks: PropTypes.number,
   tickGap: PropTypes.number,
   vertical: PropTypes.bool,
   minDistance: PropTypes.number,
   handleProps: PropTypes.object,
   springConfig: PropTypes.object,
-  renderTrack: PropTypes.func
+  renderTrack: PropTypes.func,
 };
 
 Slider.defaultPropTypes = {
@@ -419,7 +426,7 @@ Slider.defaultPropTypes = {
   vertical: false,
   minDistance: 5,
   handleProps: {},
-  springConfig: {}
+  springConfig: {},
 };
 
 export default Slider;

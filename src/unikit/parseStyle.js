@@ -10,7 +10,7 @@ const getValueByBreak = (value, breakIndex = 0) => {
   return value;
 };
 
-const isColor = col => {
+const isColor = (col) => {
   return tc(col).isValid();
 };
 
@@ -28,7 +28,7 @@ export default function parseStyle({
 }) {
   let style = overwriteStyles === false ? rest : {};
 
-  Object.keys(rest).map(key => {
+  Object.keys(rest).map((key) => {
     if (styles[key]) {
       const { stylKey, styl, color } = styles[key];
       let value = typeof rest[key] === "boolean" ? key : rest[key];
@@ -44,7 +44,7 @@ export default function parseStyle({
         if (styl) {
           style = {
             ...style,
-            ...styl
+            ...styl,
           };
           delete style[key];
         }
@@ -52,17 +52,11 @@ export default function parseStyle({
           value = theme.colors[value] || value;
           if (isColor(value)) {
             if (rest[`${key}Darken`] !== undefined) {
-              value = tc(value)
-                .darken(rest[`${key}Darken`])
-                .toString();
+              value = tc(value).darken(rest[`${key}Darken`]).toString();
             } else if (rest[`${key}Lighten`] !== undefined) {
-              value = tc(value)
-                .lighten(rest[`${key}Lighten`])
-                .toString();
+              value = tc(value).lighten(rest[`${key}Lighten`]).toString();
             } else if (rest[`${key}Alpha`] !== undefined) {
-              value = tc(value)
-                .setAlpha(rest[`${key}Alpha`])
-                .toRgbString();
+              value = tc(value).setAlpha(rest[`${key}Alpha`]).toRgbString();
             }
           }
         }
@@ -88,9 +82,12 @@ export default function parseStyle({
     const h = shadow === 1 ? 1 : Math.floor(shadow * 0.5);
     const r = interpolateShadow(b, 1, 38, 1, 16).toFixed(2);
     const o = interpolateShadow(shadow, 1, 24, 0.2, 0.6).toFixed(2);
-    style["elevation"] = shadow + 1;
-    style["boxShadow"] = `0 ${h}px ${r}px ${color}`;
-    if (Platform.OS === "android") style["shadowOpacity"] = o;
+    //style["boxShadow"] = `0 ${h}px ${r}px ${color}`;
+    style["shadowColor"] = color;
+    style["shadowOffset"] = `0px ${h}px`;
+    style["shadowOpacity"] = Platform.OS === "android" ? o : 1;
+    style["shadowRadius"] = r;
+    style["elevation"] = shadow - 1;
   }
   delete style["absoluteFill"];
   delete style["flexCenter"];

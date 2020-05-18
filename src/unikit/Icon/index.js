@@ -91,7 +91,7 @@ const Comp = withThemeProps(
       strokeWidth,
       strokeLinecap: lineCap,
       strokeDashoffset: 0,
-      fill: "transparent",
+      fill: fill ? theme.colors[color] || color : "transparent",
       style: {
         fill: fill ? theme.colors[color] || color : "transparent",
         stroke: theme.colors[color] || color,

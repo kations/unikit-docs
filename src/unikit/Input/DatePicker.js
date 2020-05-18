@@ -4,13 +4,12 @@ import {
   Platform,
   DatePickerIOS,
   DatePickerAndroid,
-  TimePickerAndroid
+  TimePickerAndroid,
 } from "react-native";
 import dayjs from "dayjs";
 import { createElement } from "react-native";
 
 import styled, { useTheme } from "../styled";
-import Select from "./Select";
 import TextInput from "./Text";
 import Box from "../Box";
 import Button from "../Button";
@@ -18,10 +17,10 @@ import Overlay from "../Overlay";
 import Picker from "../Picker";
 import { useUpdateEffect } from "../hooks";
 
-const DateInput = props => createElement("input", props);
+const DateInput = (props) => createElement("input", props);
 
 const Touchable = styled.TouchableOpacity({
-  width: "100%"
+  width: "100%",
 });
 
 const StyledDateInput = styled(DateInput)(({ theme }) => ({
@@ -37,39 +36,39 @@ const StyledDateInput = styled(DateInput)(({ theme }) => ({
   web: {
     outlineWidth: 0,
     outlineColor: "unset",
-    borderColor: "transparent"
-  }
+    borderColor: "transparent",
+  },
 }));
 
 const types = {
   date: {
-    format: "YYYY-MM-DD"
+    format: "YYYY-MM-DD",
   },
   datetime: {
-    format: "YYYY-MM-DDTHH:mm"
+    format: "YYYY-MM-DDTHH:mm",
   },
   time: {
-    format: "HH:mm"
-  }
+    format: "HH:mm",
+  },
 };
 
 var isMobile = {
-  Android: function() {
+  Android: function () {
     return navigator.userAgent.match(/Android/i);
   },
-  BlackBerry: function() {
+  BlackBerry: function () {
     return navigator.userAgent.match(/BlackBerry/i);
   },
-  iOS: function() {
+  iOS: function () {
     return navigator.userAgent.match(/iPhone|iPad|iPod/i);
   },
-  Opera: function() {
+  Opera: function () {
     return navigator.userAgent.match(/Opera Mini/i);
   },
-  Windows: function() {
+  Windows: function () {
     return navigator.userAgent.match(/IEMobile/i);
   },
-  any: function() {
+  any: function () {
     if (Platform.OS !== "web") {
       return false;
     } else {
@@ -85,15 +84,15 @@ var isMobile = {
         return false;
       }
     }
-  }
+  },
 };
 
 const WheelWrap = styled.View();
 
-const MONTHS = short => {
+const MONTHS = (short) => {
   const months = [];
   const firstDay = dayjs().startOf("year");
-  Array.from(Array(12).keys()).map(index => {
+  Array.from(Array(12).keys()).map((index) => {
     months.push(
       dayjs(firstDay)
         .add(index, "month")
@@ -103,22 +102,18 @@ const MONTHS = short => {
   return months;
 };
 
-const YEARS = yearsOffset => {
+const YEARS = (yearsOffset) => {
   const years = [];
   const firstYear = dayjs().subtract(yearsOffset, "years");
-  Array.from(Array(yearsOffset + 10).keys()).map(index => {
-    years.push(
-      dayjs(firstYear)
-        .add(index, "year")
-        .format("YYYY")
-    );
+  Array.from(Array(yearsOffset + 10).keys()).map((index) => {
+    years.push(dayjs(firstYear).add(index, "year").format("YYYY"));
   });
   return years;
 };
 
-const HOURS = use24 => {
+const HOURS = (use24) => {
   const hours = [];
-  Array.from(Array(use24 ? 24 : 12).keys()).map(index => {
+  Array.from(Array(use24 ? 24 : 12).keys()).map((index) => {
     hours.push(index);
   });
   return hours;
@@ -126,7 +121,7 @@ const HOURS = use24 => {
 
 const MINUTES = () => {
   const minutes = [];
-  Array.from(Array(60).keys()).map(index => {
+  Array.from(Array(60).keys()).map((index) => {
     minutes.push(index);
   });
   return minutes;
@@ -139,7 +134,7 @@ export const WheelPicker = ({
   value,
   yearsOffset = 100,
   type = "date",
-  use24 = true
+  use24 = true,
 }) => {
   const [date, setDate] = useState(value || new Date());
   const currentMonth = dayjs(date).format(type === "datetime" ? "MMM" : "MMMM");
@@ -160,7 +155,7 @@ export const WheelPicker = ({
           value={currentDay}
           options={Array.from(
             Array(parseInt(dayjs(date).daysInMonth())).keys()
-          ).map(day => day + 1)}
+          ).map((day) => day + 1)}
           onChange={(value, index) =>
             setDate(
               dayjs(date)
@@ -177,11 +172,7 @@ export const WheelPicker = ({
           value={currentMonth}
           options={MONTHS(type === "datetime")}
           onChange={(value, index) =>
-            setDate(
-              dayjs(date)
-                .month(index)
-                .toDate()
-            )
+            setDate(dayjs(date).month(index).toDate())
           }
           useScrollView={Platform.OS === "web"}
         />
@@ -191,12 +182,8 @@ export const WheelPicker = ({
           flex={1}
           value={currentYear}
           options={YEARS(yearsOffset)}
-          onChange={value =>
-            setDate(
-              dayjs(date)
-                .year(parseInt(value))
-                .toDate()
-            )
+          onChange={(value) =>
+            setDate(dayjs(date).year(parseInt(value)).toDate())
           }
           useScrollView={Platform.OS === "web"}
         />
@@ -206,12 +193,8 @@ export const WheelPicker = ({
           flex={1}
           value={parseInt(dayjs(date).format("HH"))}
           options={HOURS(use24)}
-          onChange={value =>
-            setDate(
-              dayjs(date)
-                .hour(parseInt(value))
-                .toDate()
-            )
+          onChange={(value) =>
+            setDate(dayjs(date).hour(parseInt(value)).toDate())
           }
           textAlign={type === "datetime" ? "right" : "center"}
           gap={type === "datetime" ? 10 : 0}
@@ -223,14 +206,10 @@ export const WheelPicker = ({
         <Picker
           flex={1}
           value={parseInt(dayjs(date).format("mm"))}
-          format={v => (v < 10 ? `0${v}` : v)}
+          format={(v) => (v < 10 ? `0${v}` : v)}
           options={MINUTES()}
-          onChange={value =>
-            setDate(
-              dayjs(date)
-                .minute(parseInt(value))
-                .toDate()
-            )
+          onChange={(value) =>
+            setDate(dayjs(date).minute(parseInt(value)).toDate())
           }
           useScrollView={Platform.OS === "web"}
         />
@@ -248,6 +227,8 @@ const DatePicker = ({
   overlayProps = {},
   doneText = "Close",
   useNativePicker = true,
+  renderTop,
+  renderBottom,
   min,
   max,
   ...rest
@@ -264,7 +245,7 @@ const DatePicker = ({
         // May 25 2020. Month 0 is January.
         date: date,
         minDate: min,
-        maxDate: max
+        maxDate: max,
       });
       if (action !== DatePickerAndroid.dismissedAction) {
         // Selected year, month (0-11), day
@@ -285,7 +266,7 @@ const DatePicker = ({
       const { action, hour, minute } = await TimePickerAndroid.open({
         hour: 14,
         minute: 0,
-        is24Hour: false // Will display '2 PM'
+        is24Hour: false, // Will display '2 PM'
       });
       if (action !== TimePickerAndroid.dismissedAction) {
         const newDateWithTime = dayjs(newDate || date)
@@ -306,7 +287,7 @@ const DatePicker = ({
         <StyledDateInput
           value={date ? dayjs(date).format(format) : undefined}
           type={type === "datetime" ? "datetime-local" : type}
-          onChange={event => {
+          onChange={(event) => {
             onChange(event.target.value);
           }}
           min={min ? dayjs(min).format(format) : undefined}
@@ -351,13 +332,14 @@ const DatePicker = ({
         {...overlayProps}
       >
         <Box width="100%">
+          {renderTop ? renderTop(setShow) : renderTop}
           {Platform.OS === "ios" && useNativePicker ? (
             <DatePickerIOS
               date={date ? date : new Date()}
               mode={type}
               minimumDate={min}
               maximumDate={max}
-              onDateChange={date => {
+              onDateChange={(date) => {
                 if (onChange) {
                   onChange(date);
                 }
@@ -366,7 +348,7 @@ const DatePicker = ({
           ) : (
             <WheelPicker
               value={date}
-              onChange={value => {
+              onChange={(value) => {
                 onChange(value);
               }}
               type={type}
@@ -374,9 +356,9 @@ const DatePicker = ({
               max={max}
             />
           )}
-
-          <Button onPress={() => setShow(false)} style={{ marginBottom: 10 }}>
-            {doneText}
+          {renderBottom ? renderBottom(setShow) : null}
+          <Button onPress={() => setShow(false)} light>
+            {theme.translations.done}
           </Button>
         </Box>
       </Overlay>
@@ -387,7 +369,7 @@ const DatePicker = ({
 DatePicker.propTypes = {
   style: PropTypes.object,
   onChange: PropTypes.func,
-  textInputProps: PropTypes.object
+  textInputProps: PropTypes.object,
 };
 
 DatePicker.WheelPicker = WheelPicker;

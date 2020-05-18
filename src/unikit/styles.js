@@ -16,6 +16,8 @@ export const uniStyles = {
   fixed: { stylKey: "position", type: PropTypes.bool },
   relative: { stylKey: "position", type: PropTypes.bool },
   sticky: { stylKey: "position", type: PropTypes.bool },
+  bold: { stylKey: "fontWeight", type: PropTypes.bool },
+  uppercase: { stylKey: "textTransform", type: PropTypes.bool },
   //shorthand
   w: { stylKey: "width", type: defaultProp },
   h: { stylKey: "height", type: defaultProp },

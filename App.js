@@ -4,14 +4,10 @@ import "react-native-gesture-handler";
 import {
   NavigationContainer,
   DefaultTheme,
-  DarkTheme
+  DarkTheme,
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import {
-  Appearance,
-  AppearanceProvider,
-  useColorScheme
-} from "react-native-appearance";
+import { Appearance } from "react-native-appearance";
 
 import { ThemeProvider } from "./src/unikit";
 import Home from "./src/pages";
@@ -31,7 +27,7 @@ export default function App() {
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
     >
       <ThemeProvider
-        defaultMode={colorScheme === "dark" ? "dark" : undefined}
+        mode={colorScheme === "dark" ? "dark" : "dark"}
         theme={{
           colors: {
             modes: {
@@ -41,10 +37,10 @@ export default function App() {
                 border: "rgba(255,255,255,0.1)",
                 placeholder: "rgba(255,255,255,0.3)",
                 text: "#FFF",
-                input: "rgb(20,20,30)"
-              }
-            }
-          }
+                input: "rgb(20,20,30)",
+              },
+            },
+          },
         }}
       >
         <Stack.Navigator>

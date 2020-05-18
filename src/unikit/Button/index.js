@@ -1,15 +1,15 @@
-import * as React from "react";
-import * as PropTypes from "prop-types";
-import { TouchableOpacity } from "react-native";
-import tc from "tinycolor2";
+import * as React from 'react';
+import * as PropTypes from 'prop-types';
+import { TouchableOpacity } from 'react-native';
+import tc from 'tinycolor2';
 
-import styled, { useTheme, withThemeProps } from "../styled";
-import Hoverable from "../Hoverable";
-import Ripple from "../Ripple";
-import Progress from "../Progress";
-import Text from "../Text";
+import styled, { useTheme, withThemeProps } from '../styled';
+import Hoverable from '../Hoverable';
+import Ripple from '../Ripple';
+import Progress from '../Progress';
+import Text from '../Text';
 
-import { isDark } from "../util";
+import { isDark } from '../util';
 
 const getBackground = ({
   bg,
@@ -18,14 +18,14 @@ const getBackground = ({
   outlined,
   light,
   clean,
-  textColor
+  textColor,
 }) => {
   if (outlined) {
     return isHovered
       ? tc(theme.colors[bg] || bg)
           .setAlpha(0.1)
           .toRgbString()
-      : "transparent";
+      : 'transparent';
   }
   if (light) {
     return isHovered
@@ -41,7 +41,7 @@ const getBackground = ({
       ? tc(theme.colors[textColor] || textColor)
           .setAlpha(0.1)
           .toRgbString()
-      : "transparent";
+      : 'transparent';
   }
   return isHovered
     ? tc(theme.colors[bg] || bg)
@@ -51,38 +51,39 @@ const getBackground = ({
 };
 
 const Touchable = styled.View({
-  position: "relative",
-  flexDirection: "row",
-  width: "auto",
-  alignItems: "center",
-  justifyContent: "center",
+  position: 'relative',
+  flexDirection: 'row',
+  width: 'auto',
+  alignItems: 'center',
+  justifyContent: 'center',
   web: {
-    cursor: "pointer",
-    transitionProperty: "all",
-    transitionDuration: "250ms"
-  }
+    cursor: 'pointer',
+    transitionProperty: 'all',
+    transitionDuration: '250ms',
+  },
 });
 
 const Label = styled(Text)(({ textColor, size }) => ({
   fontSize: size / 3,
-  textAlign: "center"
+  textAlign: 'center',
 }));
 
 const LoadingWrap = styled.View({
-  position: "absolute",
+  position: 'absolute',
   left: 0,
   top: 0,
   right: 0,
   bottom: 0,
-  alignItems: "center",
-  justifyContent: "center"
+  alignItems: 'center',
+  justifyContent: 'center',
 });
 
 const Button = withThemeProps(
   ({
+    onPress,
     children,
     size = 44,
-    bg = "primary",
+    bg = 'primary',
     activeOpacity = 0.9,
     outlined = false,
     rounded = false,
@@ -92,6 +93,7 @@ const Button = withThemeProps(
     labelProps = {},
     ripple = false,
     loading = false,
+    loadingProps = {},
     disabled = false,
     progress,
     renderLeft = null,
@@ -104,13 +106,14 @@ const Button = withThemeProps(
       : outlined || light || clean
       ? theme.colors[bg] || bg
       : isDark(theme.colors[bg] || bg)
-      ? "#FFF"
-      : "#000";
+      ? '#FFF'
+      : '#000';
     return (
       <Hoverable>
         {isHovered => (
           <Touchable
-            as={ripple ? Ripple : TouchableOpacity}
+            onPress={onPress}
+            as={ripple ? Ripple : onPress ? TouchableOpacity : undefined}
             isHovered={isHovered}
             activeOpacity={activeOpacity}
             size={size}
@@ -125,7 +128,7 @@ const Button = withThemeProps(
               isHovered,
               light,
               clean,
-              textColor
+              textColor,
             })}
             bc={theme.colors[bg] || bg}
             bw={outlined ? 3 : 0}
@@ -142,18 +145,19 @@ const Button = withThemeProps(
                 <Progress
                   trackColor="transparent"
                   progressColor={textColor}
-                  size={size / 2}
-                  progressWidth={2}
+                  size={size / 1.5}
+                  progressWidth={1.5}
                   value={progress}
                   loading={loading}
+                  {...loadingProps}
                 />
               </LoadingWrap>
             ) : null}
-            {renderLeft}
-            {typeof children === "string" ? (
+            {!loading ? renderLeft : null}
+            {typeof children === 'string' ? (
               <Label
                 color={
-                  loading === true || progress < 100 ? "transparent" : textColor
+                  loading === true || progress < 100 ? 'transparent' : textColor
                 }
                 outlined={outlined ? 1 : 0}
                 light={light ? 1 : 0}
@@ -165,16 +169,19 @@ const Button = withThemeProps(
                 {children}
               </Label>
             ) : (
-              children
+              React.cloneElement(children, {
+                ...children.props,
+                style: { ...children.props.style, opacity: loading ? 0 : 1 },
+              })
             )}
 
-            {renderRight}
+            {!loading ? renderRight : null}
           </Touchable>
         )}
       </Hoverable>
     );
   },
-  "Button"
+  'Button'
 );
 
 Button.propTypes = {
@@ -191,13 +198,13 @@ Button.propTypes = {
   clean: PropTypes.bool,
   ripple: PropTypes.bool,
   loading: PropTypes.bool,
-  progress: PropTypes.number
+  progress: PropTypes.number,
 };
 
 Button.defaultPropTypes = {
   size: 50,
-  bg: "primary",
-  labelProps: {}
+  bg: 'primary',
+  labelProps: {},
 };
 
 export default Button;

@@ -1,12 +1,12 @@
-import React, { useMemo, useEffect } from "react";
-import Svg, { Path, G } from "react-native-svg";
-import PropTypes from "prop-types";
-import { Animated, View } from "react-native";
-import { svgPathProperties } from "svg-path-properties";
+import React, { useMemo, useEffect } from 'react';
+import Svg, { Path, G } from 'react-native-svg';
+import PropTypes from 'prop-types';
+import { Animated, View } from 'react-native';
+import { svgPathProperties } from 'svg-path-properties';
 
-import styled, { withThemeProps, useTheme } from "../styled";
-import { getProgress } from "../util";
-import { defaultSpringConfig } from "../Spring/transitions";
+import styled, { withThemeProps, useTheme } from '../styled';
+import { getProgress } from '../util';
+import { useUpdateEffect } from '../hooks';
 
 const { concat, createAnimatedComponent } = Animated;
 
@@ -25,12 +25,12 @@ const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
 const circlePath = (x, y, radius, startAngle, endAngle) => {
   var start = polarToCartesian(x, y, radius, endAngle * 0.9999);
   var end = polarToCartesian(x, y, radius, startAngle);
-  var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+  var largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
   var d = [
-    "M",
+    'M',
     start.x,
     start.y,
-    "A",
+    'A',
     radius,
     radius,
     0,
@@ -39,10 +39,10 @@ const circlePath = (x, y, radius, startAngle, endAngle) => {
     end.x,
     end.y,
   ];
-  return d.join(" ");
+  return d.join(' ');
 };
 
-const clampFill = (fill) => Math.min(100, Math.max(0, fill));
+const clampFill = fill => Math.min(100, Math.max(0, fill));
 
 const AnimatedView = createAnimatedComponent(View);
 const AnimatedP = createAnimatedComponent(Path);
@@ -52,25 +52,34 @@ const Progress = withThemeProps(
     value = 0,
     size = 44,
     trackWidth = 8,
-    trackColor = "background",
+    trackColor = 'background',
     progressWidth = 6,
-    progressColor = "primary",
+    progressColor = 'primary',
     loading = false,
-    lineCap = "round",
+    lineCap = 'round',
     angle = 360,
     duration,
     min = 0,
     max = 100,
     showValue,
+    valueProps = {},
     formatValue,
     style,
     rotate = 0,
-    textColor = "text",
+    textColor = 'text',
     ...rest
   }) => {
     const theme = useTheme();
     const animatedValue = useMemo(() => new Animated.Value(0), []);
     const deg = useMemo(() => new Animated.Value(0), []);
+
+    useUpdateEffect(() => {
+      Animated.timing(animatedValue, {
+        toValue: getProgress(0, max, value || 0),
+        duration: duration,
+        useNativeDriver: true,
+      }).start();
+    }, [value]);
 
     useEffect(() => {
       if (duration) {
@@ -113,7 +122,7 @@ const Progress = withThemeProps(
 
     const loadingRotate = deg.interpolate({
       inputRange: [0, 1],
-      outputRange: ["120deg", "480deg"],
+      outputRange: ['220deg', '580deg'],
     });
 
     const t = animatedValue.interpolate({
@@ -125,13 +134,13 @@ const Progress = withThemeProps(
       d: backgroundPath,
       strokeLinecap: lineCap,
       strokeDashoffset: 50,
-      fill: "transparent",
+      fill: 'transparent',
     };
 
     return (
-      <Wrap relative>
+      <Wrap relative style={style}>
         {showValue && !loading ? (
-          <ValueWrap absoluteFill flexCenter>
+          <ValueWrap absoluteFill flexCenter {...valueProps}>
             <Label color={textColor} fontSize={size / 5}>
               {formatValue ? formatValue(value) : value}
             </Label>
@@ -153,7 +162,7 @@ const Progress = withThemeProps(
                       rotate: `${angle !== 360 ? angle / 2 : 0}deg`,
                     },
                     {
-                      rotateY: "180deg",
+                      rotateY: '180deg',
                     },
                   ],
                 }
@@ -164,7 +173,7 @@ const Progress = withThemeProps(
           <Svg
             width={size}
             height={size}
-            style={{ backgroundColor: "transparent" }}
+            style={{ backgroundColor: 'transparent' }}
           >
             <G rotate={rotate} originX={size / 2} originY={size / 2}>
               <Path
@@ -188,7 +197,7 @@ const Progress = withThemeProps(
                 style={{ stroke: theme.colors[progressColor] || progressColor }}
                 {...pathProps}
                 strokeDasharray={strokeDasharray}
-                strokeDashoffset={t}
+                strokeDashoffset={loading ? 30 : t}
               />
             </G>
           </Svg>
@@ -196,7 +205,7 @@ const Progress = withThemeProps(
       </Wrap>
     );
   },
-  "Progress"
+  'Progress'
 );
 
 Progress.propTypes = {

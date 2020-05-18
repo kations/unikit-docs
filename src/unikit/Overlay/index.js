@@ -14,16 +14,16 @@ const AnimatedScrollView = createAnimatedComponent(ScrollView);
 const customStyle = {
   center: {
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   bottom: {
     justifyContent: "flex-end",
-    alignItems: "center"
+    alignItems: "center",
   },
   top: {
     justifyContent: "flex-start",
-    alignItems: "center"
-  }
+    alignItems: "center",
+  },
 };
 
 const BackdropPress = styled.TouchableOpacity(({ zIndex, theme }) => ({
@@ -31,16 +31,11 @@ const BackdropPress = styled.TouchableOpacity(({ zIndex, theme }) => ({
   left: 0,
   bottom: 0,
   top: 0,
-  right: 0
+  right: 0,
 }));
 
 const getId = () => {
-  return (
-    "_" +
-    Math.random()
-      .toString(36)
-      .substr(2, 9)
-  );
+  return "_" + Math.random().toString(36).substr(2, 9);
 };
 
 export function Overlay({
@@ -56,14 +51,14 @@ export function Overlay({
   usePortal = true,
   modalSpring = {
     from: { o: 0 },
-    to: { o: 1 }
+    to: { o: 1 },
   },
   contentSpring = {
     from: { o: 0, y: 100 },
-    to: { o: 1, y: 0 }
+    to: { o: 1, y: 0 },
   },
   modalProps = {},
-  contentProps = {}
+  contentProps = {},
 }) {
   const [render, setRender] = useState(visible);
   const [id] = useState(() => getId());
@@ -78,14 +73,20 @@ export function Overlay({
     }
   }, [visible]);
 
+  const AnimatedScrollComp = scrollComp
+    ? createAnimatedComponent(scrollComp)
+    : undefined;
+
   const PortalComp = usePortal ? PortalEnter : Fragment;
-  const modalComp = scrollable ? scrollComp || AnimatedScrollView : undefined;
+  const modalComp = scrollable
+    ? AnimatedScrollComp || AnimatedScrollView
+    : undefined;
   const modalStyle = customStyle[position] || {};
   const scrollableProps = scrollable
     ? {
         showsVerticalScrollIndicator: false,
         showsVerticalScrollIndicator: false,
-        contentContainerStyle: { flexGrow: 1, ...modalStyle }
+        contentContainerStyle: { flexGrow: 1, ...modalStyle },
       }
     : { ...modalStyle };
 
@@ -113,12 +114,13 @@ export function Overlay({
           isVisible={visible}
           relative
           p={theme.globals.gap}
+          w="90%"
           bg="background"
           useTransition
           delay={50}
           {...contentProps}
           style={{
-            ...(contentProps.style ? contentProps.style : {})
+            ...(contentProps.style ? contentProps.style : {}),
           }}
           {...contentSpring}
         >
@@ -141,7 +143,7 @@ Overlay.propTypes = {
   modalSpring: PropTypes.object,
   contentSpring: PropTypes.object,
   modalProps: PropTypes.object,
-  contentProps: PropTypes.object
+  contentProps: PropTypes.object,
 };
 
 export default withThemeProps(Overlay, "Overlay");

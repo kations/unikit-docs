@@ -236,7 +236,20 @@ const pages = [
     from: "Chart",
     group: "UI",
     smallCode: `<Flex w="200" h={80}><Chart data={[10,15,13,17,15,22]} height={80} onPress={bar => alert(bar.index)} /></Flex>`,
-    code: `<Chart data={[10,15,13,17,15,22]} height={150} onPress={bar => alert(bar.index)} />`,
+    code: `<Chart data={[
+      { value: 543, label: "Jan", progress: 0.5 },
+      { value: 1543, label: "Feb", progress: 0.5 },
+      { value: 2543, label: "Mer", progress: 0.5 },
+      { value: 3543, label: "Apr", progress: 0.75 },
+      { value: 4543, label: "Mai", progress: 0.2 },
+      { value: 5543, label: "Jun", progress: 0.75 },
+      { value: 6543, label: "Jul" },
+      { value: 7543, label: "Aug" },
+      { value: 5843, label: "Sep" },
+      { value: 8543, label: "Okt" },
+      { value: 9543, label: "Nov" },
+      { value: 10543, label: "Dez" },
+    ]} height={150} showValue xAxis onPress={bar => alert(bar.index)} />`,
   },
   {
     path: "/grid",
@@ -292,7 +305,7 @@ const pages = [
     </Swiper>`,
     code: `<Flex>
     <Flex w="100%" h={200}>
-      <Swiper flex={1} dots>
+      <Swiper flex={1} dots arrows>
         <Box bg="primary" bgAlpha={0.75} flex={1} />
         <Box bg="primary" bgAlpha={0.5} flex={1} />
         <Box bg="primary" bgAlpha={0.25} flex={1} />
@@ -387,6 +400,12 @@ const pages = [
               field="multi"
               type="multiselect"
               label="MultiSelect"
+              options={["One", "Two"]}
+            />
+            <Input
+              field="multiswtich"
+              type="multiswitch"
+              label="MultiSitch"
               options={["One", "Two"]}
             />
             <Input field="number" type="number" label="Number" />

@@ -17,14 +17,14 @@ const Container = styled.View(({ from, gap }) => ({
   paddingHorizontal: gap,
 }));
 
-const Message = ({ children, timeout, setItems, key, ...rest }) => {
+const Message = ({ children, timeout, removeItem, key, ...rest }) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {
       setVisible(false);
       setTimeout(() => {
-        setItems((state) => state.filter((i) => i.key !== key));
+        removeItem();
       }, 500);
     }, timeout);
   }, []);
@@ -56,6 +56,7 @@ const Alert = withThemeProps(
     maxWidth = 700,
     offset = 20,
     onAlert,
+    onFeedback,
     ...rest
   }) => {
     const [items, setItems] = useState([]);
@@ -78,6 +79,7 @@ const Alert = withThemeProps(
           setItems((state) => [{ key: id++, ...alert }, ...state]);
         }
         if (onAlert) onAlert(alert);
+        if (onFeedback) onFeedback(alert.type);
       }
     }, [alert, from]);
 
@@ -93,7 +95,10 @@ const Alert = withThemeProps(
         {items.map((item, index) => (
           <Message
             my={gap / 2}
-            setItems={setItems}
+            removeItem={() => {
+              const newItems = items.filter((i) => i.key !== item.key);
+              setItems(newItems);
+            }}
             timeout={timeout}
             key={item.key}
           >

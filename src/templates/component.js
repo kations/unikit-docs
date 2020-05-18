@@ -2,12 +2,12 @@ import "parse-prop-types";
 import React from "react";
 import * as unikit from "../unikit";
 
-import { Flex, Page, H1, H2, Animate, Code, isWeb, isAndroid } from "../unikit";
+import { Flex, Page, H1, H3, Animate, Code, isWeb, isAndroid } from "../unikit";
 import { Wrapper } from "../components";
 import Table from "../components/Table";
 import Playground from "../components/Playground";
 
-const capitalize = s => {
+const capitalize = (s) => {
   if (typeof s !== "string") return "";
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
@@ -19,7 +19,9 @@ export default function App({ pageContext, route }) {
     <Page scrollable={!isWeb}>
       <Wrapper>
         <Flex py={15}>
-          <H1 animate>{title}</H1>
+          <H1 animate bold>
+            {title}
+          </H1>
         </Flex>
         <AniComp delay={250}>
           <Flex py={15}>
@@ -34,9 +36,9 @@ export default function App({ pageContext, route }) {
           <Playground code={code} scope={{ Flex, [from]: unikit[from] }} />
         </AniComp>
         <Flex py={15} mb={150}>
-          <H2 delay={500} animate>
+          <H3 delay={500} bold animate>
             Props
-          </H2>
+          </H3>
           <AniComp delay={500}>
             <Table
               mt={15}

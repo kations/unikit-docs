@@ -2,22 +2,24 @@ import React, {
   useState,
   useEffect,
   forwardRef,
-  useImperativeHandle
+  useImperativeHandle,
 } from "react";
 import PropTypes from "prop-types";
 
 import styled, { withThemeProps } from "../styled";
-import { useLayout, useGesture, useInterval } from "../hooks";
+import { useLayout, useGesture, useInterval, usePrevious } from "../hooks";
 import { getProgress, getValueByProgress } from "../util";
 import Dots from "./dots";
 import { AnimatedView, useSpring } from "../Spring";
+import Icon from "../Icon";
 
 const Wrapper = styled.View();
+const Arrow = styled.TouchableOpacity();
 const Item = AnimatedView;
 const Track = styled(AnimatedView)(({ gesture }) => ({
   web: {
-    cursor: gesture ? "grab" : "auto"
-  }
+    cursor: gesture ? "grab" : "auto",
+  },
 }));
 
 export function Swiper(
@@ -27,6 +29,10 @@ export function Swiper(
     vertical = false,
     autoplay = false,
     gesture = true,
+    arrows = false,
+    arrowProps = { color: "#FFF", strokeWidth: 0.5 },
+    arrowDisabledAlpha = 0.3,
+    arrowOffset = 10,
     dots = false,
     dotsProps = {},
     itemProps = {},
@@ -36,6 +42,8 @@ export function Swiper(
     springConfig = {},
     onSwipe,
     onSwipeEnd,
+    renderOnActive = false,
+    gestureProps = {},
     ...rest
   },
   ref
@@ -49,7 +57,7 @@ export function Swiper(
   const dist = useSpring({
     to: vertical ? -(index * height) : -(index * width),
     immediate: down,
-    config: springConfig
+    config: springConfig,
   });
 
   useInterval(
@@ -59,7 +67,7 @@ export function Swiper(
     autoplay && !down ? autoplayTimeout : null
   );
 
-  const setNewIndex = newIndex => {
+  const setNewIndex = (newIndex) => {
     if (newIndex > items.length - 1) {
       newIndex = items.length - 1;
     } else if (newIndex < 0) {
@@ -117,7 +125,8 @@ export function Swiper(
           }
         }
         setDown(false);
-      }
+      },
+      ...gestureProps,
     },
     [width, height, down]
   );
@@ -129,10 +138,12 @@ export function Swiper(
     swipePrev: () => {
       setNewIndex(index - 1);
     },
-    swipeTo: newIndex => {
+    swipeTo: (newIndex) => {
       setNewIndex(newIndex);
-    }
+    },
   }));
+
+  console.log({ index });
 
   return (
     <Wrapper onLayout={onLayout} w="100%" overflow="hidden" relative {...rest}>
@@ -146,30 +157,64 @@ export function Swiper(
           ...(itemProps.style || {}),
           width: vertical ? "100%" : items.length * width,
           height: vertical ? items.length * height : "100%",
-          transform: vertical ? [{ translateY: dist }] : [{ translateX: dist }]
+          transform: vertical ? [{ translateY: dist }] : [{ translateX: dist }],
         }}
       >
-        {items.map((child, i) => (
-          <Item
-            style={{
-              width: vertical ? "100%" : width,
-              height: !vertical ? "100%" : height
-            }}
-            key={i}
-          >
-            {child}
-          </Item>
-        ))}
+        {items.map((child, i) => {
+          const isActive = activeIndex === i;
+          return (
+            <Item
+              style={{
+                width: vertical ? "100%" : width,
+                height: !vertical ? "100%" : height,
+              }}
+              key={i}
+            >
+              {!isActive && renderOnActive ? null : child}
+            </Item>
+          );
+        })}
       </Track>
       {dots ? (
         <Dots
           items={items}
           vertical={vertical}
           index={index}
-          onPress={index => setNewIndex(index)}
+          onPress={(index) => setNewIndex(index)}
           springConfig={springConfig}
           {...{ position: vertical ? "right" : "bottom", ...dotsProps }}
         />
+      ) : null}
+      {arrows ? (
+        <Wrapper
+          absoluteFill
+          row={!vertical}
+          alignItems="center"
+          justifyContent="space-between"
+          pointerEvents="box-none"
+          p={arrowOffset}
+        >
+          <Arrow
+            opacity={index > 0 ? 1 : arrowDisabledAlpha}
+            key={`arrow-left-${index}`}
+          >
+            <Icon
+              onPress={() => setNewIndex(index - 1)}
+              name={vertical ? "chevronUp" : "chevronLeft"}
+              {...arrowProps}
+            />
+          </Arrow>
+          <Arrow
+            opacity={index < items.length - 1 ? 1 : arrowDisabledAlpha}
+            key={`arrow-right-${index}`}
+          >
+            <Icon
+              onPress={() => setNewIndex(index + 1)}
+              name={vertical ? "chevronDown" : "chevronRight"}
+              {...arrowProps}
+            />
+          </Arrow>
+        </Wrapper>
       ) : null}
     </Wrapper>
   );
@@ -186,7 +231,7 @@ Swiper.propTypes = {
   gesture: PropTypes.bool,
   dots: PropTypes.bool,
   dotsProps: PropTypes.object,
-  itemProps: PropTypes.object
+  itemProps: PropTypes.object,
 };
 
 export default withThemeProps(forwardRef(Swiper), "Swiper");

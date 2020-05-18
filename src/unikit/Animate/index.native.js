@@ -44,16 +44,20 @@ const Animate = withThemeProps(
       config,
     });
 
-    const opacity = useSpring({
+    const o = useSpring({
       to: visible ? getValue(to, "o", 0) : getValue(from, "o", 0),
       config,
     });
 
     useEffect(() => {
       if (isVisible && !onVisible) {
-        setTimeout(() => {
+        if (delay) {
+          setTimeout(() => {
+            setVisible(true);
+          }, delay);
+        } else {
           setVisible(true);
-        }, delay || 25);
+        }
       }
     }, []);
 
@@ -61,19 +65,25 @@ const Animate = withThemeProps(
       setVisible(isVisible);
     }, [isVisible]);
 
-    // const { opacity, x, y, z } = useSpring({
-    //   from,
-    //   to: (!visible && onVisible) || isVisible === false ? from : to,
-    //   config: springConfig[config] || config || springConfig.default,
-    //   delay: delay || 0
-    // });
+    const opacity = getValue(from, "o") !== undefined ? o : 1;
+    const transform = [];
+
+    if (getValue(from, "y") !== undefined) {
+      transform.push({ translateY: y });
+    }
+    if (getValue(from, "x") !== undefined) {
+      transform.push({ translateX: x });
+    }
+    if (getValue(from, "s") !== undefined) {
+      transform.push({ translateX: s });
+    }
 
     const AnimatedComp = (
       <Box
         style={{
           ...style,
-          opacity: opacity,
-          transform: [{ translateY: y }, { translateX: x }, { scale: s }],
+          opacity,
+          transform,
         }}
         pointerEvents={visible ? "auto" : "none"}
         {...rest}

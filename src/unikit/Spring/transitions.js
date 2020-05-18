@@ -1,13 +1,11 @@
 import * as React from "react";
 import Animated, { Easing } from "react-native-reanimated";
-//import { useMemoOne } from "use-memo-one";
-const useMemoOne = React.useMemo;
+
 export const bin = (value) => (value ? 1 : 0);
 
 const {
   Value,
   cond,
-  eq,
   block,
   set,
   Clock,
@@ -16,10 +14,11 @@ const {
   stopClock,
   timing,
   neq,
-  useCode,
   SpringUtils,
   not,
   clockRunning,
+  divide,
+  diff,
 } = Animated;
 
 export const defaultSpringConfig = SpringUtils.makeDefaultConfig();
@@ -32,12 +31,7 @@ export const delayAni = (node, duration) => {
   ]);
 };
 
-export const withTransition = ({
-  value,
-  customConfig = {},
-  immediate,
-  loop,
-}) => {
+export const withTransition = ({ value, customConfig = {}, loop }) => {
   const clock = new Clock();
   const state = {
     finished: new Value(0),
@@ -81,22 +75,20 @@ export const withTransition = ({
 
 export const withSpringTransition = ({
   value,
+  start,
   customConfig = defaultSpringConfig,
-  immediate,
-  velocity = 0,
-  delay = 0,
   loop,
 }) => {
   const clock = new Clock();
   const state = {
     finished: new Value(0),
     velocity: new Value(0),
-    position: new Value(0),
+    position: new Value(start),
     time: new Value(0),
     active: new Value(0),
   };
   const config = {
-    toValue: new Value(0),
+    toValue: value,
     damping: 15,
     mass: 1,
     stiffness: 150,
@@ -117,11 +109,10 @@ export const withSpringTransition = ({
           startClock(clock),
         ]),
       ]
-    : [];
+    : [cond(state.finished, [stopClock(clock), set(state.finished, 0)])];
 
   return block([
     startClock(clock),
-    set(config.toValue, value),
     spring(clock, state, config),
     ...looping,
     state.position,
@@ -129,29 +120,3 @@ export const withSpringTransition = ({
 };
 
 export const withTimingTransition = withTransition;
-
-export const useTransition = (state, config = {}) => {
-  const value = useMemoOne(() => new Value(0), []);
-  useCode(() => set(value, typeof state === "boolean" ? bin(state) : state), [
-    state,
-    value,
-  ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const transition = useMemoOne(() => withTransition(value, config), [value]);
-  return transition;
-};
-
-export const useSpringTransition = (state, config = defaultSpringConfig) => {
-  const value = useMemoOne(() => new Value(0), []);
-  useCode(() => set(value, typeof state === "boolean" ? bin(state) : state), [
-    state,
-    value,
-  ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const transition = useMemoOne(() => withSpringTransition(value, config), [
-    value,
-  ]);
-  return transition;
-};
-
-export const useTimingTransition = useTransition;
