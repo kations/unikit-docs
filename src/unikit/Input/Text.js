@@ -51,7 +51,8 @@ const Text = withThemeProps(
 
     return (
       <TextInput
-        h={size}
+        h={multiline ? "auto" : size}
+        minHeight={size}
         value={value !== undefined && value !== null ? value.toString() : ""}
         as={as || undefined}
         onChangeText={(text) => (onChange ? onChange(text) : null)}

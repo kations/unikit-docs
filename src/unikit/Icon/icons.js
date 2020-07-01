@@ -16,6 +16,13 @@ export default {
   chevronUp: "M18,15l-6-6l-6,6",
   chevronRight: "M9,18l6-6L9,6",
   chevronDown: "M6,9l6,6l6-6",
+  play: "M5,3l14,9L5,21V3z",
+  pause: "M6,4h4v16H6V4z M14,4h4v16h-4V4z",
+  maximize: "M15,3h6v6 M9,21H3v-6 M21,3l-7,7 M3,21l7-7",
+  minimize: "M4,14h6v6 M20,10h-6V4 M14,10l7-7 M3,21l7-7",
+  volumeX: "M11,5L6,9H2v6h4l5,4V5z M23,9l-6,6 M17,9l6,6",
+  volume2:
+    "M11,5L6,9H2v6h4l5,4V5z M19.1,4.9c3.9,3.9,3.9,10.2,0,14.1 M15.5,8.5c2,2,2,5.1,0,7.1",
   edit: "M17,3c1.1-1.1,2.9-1.1,4,0s1.1,2.9,0,4l0,0L7.5,20.5L2,22l1.5-5.5L17,3z",
   download:
     "M21,15v4c0,1.1-0.9,2-2,2H5c-1.1,0-2-0.9-2-2v-4 M7,10l5,5l5-5 M12,15V3",

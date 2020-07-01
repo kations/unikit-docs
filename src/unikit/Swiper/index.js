@@ -31,8 +31,8 @@ export function Swiper(
     gesture = true,
     arrows = false,
     arrowProps = { color: "#FFF", strokeWidth: 0.5 },
+    arrowWrapperProps = {},
     arrowDisabledAlpha = 0.3,
-    arrowOffset = 10,
     dots = false,
     dotsProps = {},
     itemProps = {},
@@ -143,8 +143,6 @@ export function Swiper(
     },
   }));
 
-  console.log({ index });
-
   return (
     <Wrapper onLayout={onLayout} w="100%" overflow="hidden" relative {...rest}>
       <Track
@@ -192,7 +190,7 @@ export function Swiper(
           alignItems="center"
           justifyContent="space-between"
           pointerEvents="box-none"
-          p={arrowOffset}
+          {...arrowWrapperProps}
         >
           <Arrow
             opacity={index > 0 ? 1 : arrowDisabledAlpha}

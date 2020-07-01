@@ -48,6 +48,7 @@ export { default as Page } from "./Page";
 export { default as Tabs } from "./Tabs";
 export { default as Swiper } from "./Swiper";
 export { default as Chart } from "./Chart";
+export { default as LineChart } from "./LineChart";
 export { default as Overlay } from "./Overlay";
 export { default as Headline } from "./Headline";
 export { default as Dropdown } from "./Dropdown";

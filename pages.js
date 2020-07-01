@@ -252,6 +252,45 @@ const pages = [
     ]} height={150} showValue xAxis onPress={bar => alert(bar.index)} />`,
   },
   {
+    path: "/linechart",
+    title: "LineChart",
+    from: "LineChart",
+    group: "UI",
+    smallCode: `<Flex w="200" h={80}><LineChart data={[10,15,13,17,15,12]} height={80} zeroLine  /></Flex>`,
+    code: `<Flex  w="100%" px={0}><LineChart data={[
+      {
+        "epithelision": 23,
+        "fibrin": 18,
+        "granulation": 16,
+        "label": "07.11.2019",
+        "nekrose": 32,
+      },
+    {
+        "epithelision": 23,
+        "fibrin": 18,
+        "granulation": 16,
+        "label": "07.11.2019",
+        "nekrose": 32,
+      },
+      {
+        "epithelision": 0,
+        "fibrin": 0,
+        "granulation": 0,
+        "label": "07.11.2019",
+        "nekrose": 0,
+      },
+     {
+        "epithelision": 0,
+        "fibrin": 0,
+        "granulation": 0,
+        "label": "12.02.2020",
+        "nekrose": 0,
+      },
+     
+
+    ]}  yAxis legend minChartWidth={700} scrollable height={150} onChange={({index}) => console.log({index})}  keys={["epithelision","fibrin"]} xAxis keyProps={{value: {label: "Revenue"}, fibrin: {color: "red", gradient: false, shadow: false, strokeWidth: 0.5, strokeDasharray: 5, animated: false}}}  /></Flex>`,
+  },
+  {
     path: "/grid",
     title: "Grid",
     from: "Grid",

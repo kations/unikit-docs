@@ -9,7 +9,7 @@ import {
 import { createStackNavigator } from "@react-navigation/stack";
 import { Appearance } from "react-native-appearance";
 
-import { ThemeProvider } from "./src/unikit";
+import { ThemeProvider, color } from "./src/unikit";
 import Home from "./src/pages";
 import Template from "./src/templates/component";
 
@@ -30,14 +30,22 @@ export default function App() {
         mode={colorScheme === "dark" ? "dark" : "dark"}
         theme={{
           colors: {
+            background: "#F9F8F2",
+            primary: "#54C1BE",
+            shadow: "#E6E3E3",
+            primaryLight: color("#54C1BE").setAlpha(0.1).toRgbString(),
+            primaryMedium: color("#54C1BE").setAlpha(0.5).toRgbString(),
+            text: "#5A6175",
+            success: "#54C1BE",
+            border: "rgba(0,0,0,0.1)",
             modes: {
               dark: {
-                background: "rgb(20,20,30)",
-                surface: "rgb(40,40,50)",
-                border: "rgba(255,255,255,0.1)",
-                placeholder: "rgba(255,255,255,0.3)",
+                background: "#211E39",
+                surface: "#34345D",
+                input: "#34345D",
+                shadow: "rgba(0,0,0,0.3)",
                 text: "#FFF",
-                input: "rgb(20,20,30)",
+                border: "rgba(255,255,255,0.1)",
               },
             },
           },

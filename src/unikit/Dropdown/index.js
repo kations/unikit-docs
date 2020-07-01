@@ -6,6 +6,7 @@ import styled, { withThemeProps } from "../styled";
 import Flex from "../Flex";
 import Animate from "../Animate";
 import Overlay from "../Overlay";
+import { useUpdateEffect } from "../hooks";
 
 const BackdropPress = styled.TouchableOpacity(({ zIndex, theme }) => ({
   position: Platform.OS === "web" ? "fixed" : "absolute",
@@ -23,9 +24,14 @@ const Dropdown = withThemeProps(
     content = null,
     theme,
     backdrop = false,
+    isOpen = false,
     ...rest
   }) => {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(isOpen);
+
+    useUpdateEffect(() => {
+      setOpen(isOpen);
+    }, [isOpen]);
 
     return (
       <Fragment>

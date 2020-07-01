@@ -4,6 +4,10 @@ import { Dimensions, Platform, PixelRatio } from "react-native";
 const get = require("get-value");
 const set = require("set-value");
 
+export function isNumber(value) {
+  return isFinite(value);
+}
+
 export function rem(value) {
   if (Platform.OS === "web") return `${value}rem`;
   const { width } = Dimensions.get("window");
